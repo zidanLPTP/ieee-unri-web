@@ -1,0 +1,74 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CORE
+  HEAD
+  STAFF
+}
+
+model Officer {
+  id         Int      @id @default(autoincrement())
+  memberId   String?  @unique
+  name       String
+  password   String   
+  accessRole Role     @default(STAFF) 
+  position   String   
+  division   String   
+  image      String?  
+  order      Int      @default(100) 
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  title       String
+  date        DateTime
+  timeStart   String
+  timeEnd     String?  
+  
+  locationName String  
+  description  String  @db.Text 
+  
+  category    String   
+  poster      String?  
+  regLink     String?  
+  
+  status      String   @default("upcoming") 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model News {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String   @db.Text 
+  author    String
+  date      DateTime
+  image     String?  
+  category  String  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Gallery {
+  id        Int      @id @default(autoincrement())
+  caption   String
+  image     String?  
+  tag       String
+  author    String
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
