@@ -61,7 +61,7 @@ export default function Footer() {
     
               <div className="absolute inset-0 bg-[#0C101C]/20 pointer-events-none z-10 group-hover:bg-transparent transition-colors duration-500" />
               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.699478839846!2d101.37286377405232!3d0.48074946377987825!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5a9d8042457ad%3A0x6734c56209861613!2sFakultas%20Teknik%20Universitas%20Riau!5e0!3m2!1sid!2sid!4v1709456000000!5m2!1sid!2sid"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d952.1692281297348!2d101.37660066407183!3d0.4830806454601319!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5a9150d5cd463%3A0x69fb9da29539951d!2sDekanat%20Fakultas%20Teknik%20Universitas%20Riau!5e1!3m2!1sid!2sid!4v1768318989709!5m2!1sid!2sid" 
                 width="100%" 
                 height="100%" 
                 style={{ border: 0, filter: 'grayscale(100%) invert(92%) contrast(83%)' }} 
@@ -158,8 +158,8 @@ export default function Footer() {
                 </div>
                 <span className="group-hover:text-white transition-colors">
                   <strong>Secretariat:</strong><br />
-                  Fakultas Teknik,<br />
-                  Kampus Bina Widya Km 12,5,<br />
+                  Dekanat Fakultas Teknik lt 2,<br />
+                  Universitas Riau,<br />
                   Simpang Baru, Pekanbaru.
                 </span>
               </li>

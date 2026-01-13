@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Instagram, Linkedin, Mail, Youtube, ArrowRight, ChevronDown, Check } from 'lucide-react';
+import { Instagram, Linkedin, Mail, Youtube, ArrowRight, ChevronDown, Check, Phone, PhoneCall } from 'lucide-react';
 
 export default function HeroSection() {
   const [scrollY, setScrollY] = useState(0);
@@ -93,6 +93,11 @@ export default function HeroSection() {
             label: "Email",
             isEmail: true 
           },
+          {
+            icon : Phone,
+            href: "https://wa.me/6283185116094",
+            label: "WhatsApp"
+          }
 
           // { 
           //   icon: Youtube, 
