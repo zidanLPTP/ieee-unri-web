@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, CheckCircle, User, Clock, 
   ImageIcon, Eye,
-  LayoutDashboard, Users, UserPlus, Newspaper, Calendar, LogOut
+  LayoutDashboard, Users, UserPlus, Newspaper, Calendar, LogOut, Menu, X
 } from 'lucide-react';
 import { logoutAction } from '@/actions/auth-actions';
 import { createNews } from '@/actions/news-actions'; 
@@ -17,6 +17,7 @@ export default function CreateNewsPage() {
   
   const [user, setUser] = useState({ name: 'Admin', role: 'Staff' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('adminUser');
@@ -88,15 +89,31 @@ export default function CreateNewsPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#0C101C] text-white selection:bg-[#E7B95A] selection:text-[#0C101C]">
+    <div className="flex min-h-screen bg-[#0C101C] text-white selection:bg-[#E7B95A] selection:text-[#0C101C] relative">
 
-      <aside className="w-64 bg-[#151b2b] border-r border-white/5 flex-col hidden md:flex sticky top-0 h-screen overflow-y-auto shrink-0 z-50">
-        <div className="p-8 flex items-center gap-3">
-          <div className="w-8 h-8 rounded bg-gradient-to-br from-[#E7B95A] to-[#F4D03F] flex items-center justify-center text-[#0C101C] font-bold">I</div>
-          <div>
-            <h1 className="font-bold text-lg leading-none">IEEE Admin</h1>
-            <span className="text-[10px] text-gray-500 uppercase tracking-wider">Control Panel</span>
+      {isSidebarOpen && (
+        <div 
+            className="fixed inset-0 bg-black/80 z-40 md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <aside className={`
+          fixed inset-y-0 left-0 z-50 w-64 bg-[#151b2b] border-r border-white/5 flex flex-col h-screen overflow-y-auto transition-transform duration-300 ease-in-out shrink-0
+          md:translate-x-0 md:static md:sticky md:top-0
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <div className="p-8 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded bg-gradient-to-br from-[#E7B95A] to-[#F4D03F] flex items-center justify-center text-[#0C101C] font-bold">I</div>
+            <div>
+                <h1 className="font-bold text-lg leading-none">IEEE Admin</h1>
+                <span className="text-[10px] text-gray-500 uppercase tracking-wider">Control Panel</span>
+            </div>
           </div>
+          <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-gray-400 hover:text-white">
+            <X size={24} />
+          </button>
         </div>
 
         <nav className="flex-1 px-4 space-y-2">
@@ -141,13 +158,19 @@ export default function CreateNewsPage() {
         </div>
       </aside>
 
-      <main className="flex-1 h-screen overflow-y-auto relative pb-20">
+      <main className="flex-1 h-screen overflow-y-auto relative pb-20 w-full">
         
-        <div className="sticky top-0 z-30 bg-[#0C101C]/80 backdrop-blur-md border-b border-white/5 px-8 py-5 flex justify-between items-center shadow-md">
+        <div className="sticky top-0 z-30 bg-[#0C101C]/80 backdrop-blur-md border-b border-white/5 px-4 md:px-8 py-5 flex justify-between items-center shadow-md gap-4">
            <div className="flex items-center gap-4">
+              <button 
+                  onClick={() => setIsSidebarOpen(true)} 
+                  className="md:hidden p-2 bg-[#151b2b] rounded-lg text-[#E7B95A] border border-white/10 hover:bg-white/5"
+              >
+                  <Menu size={24} />
+              </button>
               <div>
-                 <h1 className="font-bold text-2xl text-white">News Publisher</h1>
-                 <p className="text-xs text-gray-400 mt-1">Share achievements & updates</p>
+                 <h1 className="font-bold text-xl md:text-2xl text-white">News Publisher</h1>
+                 <p className="text-xs text-gray-400 mt-1 hidden md:block">Share achievements & updates</p>
               </div>
            </div>
            
@@ -156,17 +179,17 @@ export default function CreateNewsPage() {
                 onClick={handlePublish}
                 disabled={isSubmitting}
                 className={`
-                  px-6 py-2.5 rounded-xl text-sm font-bold text-[#0C101C] flex items-center gap-2
+                  px-4 md:px-6 py-2.5 rounded-xl text-sm font-bold text-[#0C101C] flex items-center gap-2
                   bg-[#E7B95A] hover:bg-[#F4D03F] transition-colors shadow-lg
-                  disabled:opacity-50 disabled:cursor-not-allowed
+                  disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap
                 `}
               >
-                 {isSubmitting ? "Publishing..." : <><CheckCircle size={16} /> Publish Now</>}
+                 {isSubmitting ? "Publishing..." : <><CheckCircle size={16} /> <span className="hidden md:inline">Publish Now</span><span className="md:hidden">Publish</span></>}
               </button>
            </div>
         </div>
 
-        <div className="container mx-auto px-6 md:px-8 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="container mx-auto px-4 md:px-8 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
            
            <div className="lg:col-span-7 space-y-6">
               
@@ -237,7 +260,7 @@ export default function CreateNewsPage() {
               </div>
            </div>
 
-           <div className="lg:col-span-5 sticky top-28">
+           <div className="lg:col-span-5 lg:sticky lg:top-28">
                <div className="flex items-center gap-2 mb-4">
                   <Eye size={18} className="text-[#E7B95A]" />
                   <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Live Preview</span>

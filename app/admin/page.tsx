@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { 
   LayoutDashboard, Calendar, Users, FileText, LogOut, 
   Plus, Search, FolderPlus, Trash2, ChevronLeft, ChevronRight, 
-  Image as ImageIcon, Newspaper, UserPlus, Loader2
+  Image as ImageIcon, Newspaper, UserPlus, Loader2, Menu, X
 } from 'lucide-react';
 import { getDashboardStats } from '@/actions/dashboard-stats'; 
 import { logoutAction } from '@/actions/auth-actions';
@@ -13,7 +13,6 @@ import { useRouter } from 'next/navigation';
 import { deleteEvent } from '@/actions/event-actions';
 import { deleteNews } from '@/actions/news-actions';
 import { deleteGallery } from '@/actions/gallery-actions';
-
 
 type DataItem = {
   id: number;
@@ -28,11 +27,11 @@ type DataItem = {
 export default function AdminDashboard() {
   const router = useRouter();
   
-  // State User & Data
   const [user, setUser] = useState({ name: 'Admin', role: 'Loading...' });
   const [stats, setStats] = useState({ totalMembers: 0, totalDivisions: 0, totalContent: 0 });
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState<number | null>(null); 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'events' | 'news' | 'gallery'>('events');
   const [events, setEvents] = useState<DataItem[]>([]);
@@ -41,7 +40,6 @@ export default function AdminDashboard() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-
 
   useEffect(() => {
     async function initData() {
@@ -63,7 +61,6 @@ export default function AdminDashboard() {
 
     initData();
   }, []);
-
 
   const handleDelete = async (id: number) => {
     if (!confirm("Apakah Anda yakin ingin menghapus item ini? Data yang dihapus tidak bisa dikembalikan.")) {
@@ -119,17 +116,33 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0C101C] text-white flex selection:bg-[#E7B95A] selection:text-[#0C101C]">
+    <div className="min-h-screen bg-[#0C101C] text-white flex selection:bg-[#E7B95A] selection:text-[#0C101C] relative">
       
-      <aside className="w-64 bg-[#151b2b] border-r border-white/5 flex-col hidden md:flex sticky top-0 h-screen overflow-y-auto">
-        <div className="p-8 flex items-center gap-3">
-          <div className="w-8 h-8 rounded bg-gradient-to-br from-[#E7B95A] to-[#F4D03F] flex items-center justify-center text-[#0C101C] font-bold">
-            I
+      {isSidebarOpen && (
+        <div 
+            className="fixed inset-0 bg-black/80 z-40 md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <aside className={`
+          fixed inset-y-0 left-0 z-50 w-64 bg-[#151b2b] border-r border-white/5 flex flex-col h-screen overflow-y-auto transition-transform duration-300 ease-in-out
+          md:translate-x-0 md:static md:sticky md:top-0
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <div className="p-8 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded bg-gradient-to-br from-[#E7B95A] to-[#F4D03F] flex items-center justify-center text-[#0C101C] font-bold">
+                I
+            </div>
+            <div>
+                <h1 className="font-bold text-lg leading-none">IEEE Admin</h1>
+                <span className="text-[10px] text-gray-500 uppercase tracking-wider">Control Panel</span>
+            </div>
           </div>
-          <div>
-            <h1 className="font-bold text-lg leading-none">IEEE Admin</h1>
-            <span className="text-[10px] text-gray-500 uppercase tracking-wider">Control Panel</span>
-          </div>
+          <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-gray-400 hover:text-white">
+            <X size={24} />
+          </button>
         </div>
 
         <nav className="flex-1 px-4 space-y-2">
@@ -181,14 +194,22 @@ export default function AdminDashboard() {
         </div>
       </aside>
 
-      <main className="flex-1 p-4 md:p-10 overflow-y-auto">
-        <header className="flex justify-between items-center mb-10">
-           <div>
-              <h2 className="text-3xl font-bold">Dashboard</h2>
-              <p className="text-gray-400 text-sm">
-                Welcome back, <b>{user.name}</b>.
-                {loading && <span className="ml-2 text-xs text-[#E7B95A] animate-pulse">Syncing data...</span>}
-              </p>
+      <main className="flex-1 p-4 md:p-10 overflow-y-auto w-full">
+        <header className="flex justify-between items-center mb-10 gap-4">
+           <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setIsSidebarOpen(true)} 
+                className="md:hidden p-2 bg-[#151b2b] rounded-lg text-[#E7B95A] border border-white/10 hover:bg-white/5"
+              >
+                <Menu size={24} />
+              </button>
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold">Dashboard</h2>
+                <p className="text-gray-400 text-xs md:text-sm mt-1">
+                    Welcome back, <b>{user.name}</b>.
+                    {loading && <span className="ml-2 text-xs text-[#E7B95A] animate-pulse">Syncing data...</span>}
+                </p>
+              </div>
            </div>
         </header>
 
@@ -199,23 +220,23 @@ export default function AdminDashboard() {
         </div>
 
         <div className="bg-[#151b2b] border border-white/5 rounded-3xl overflow-hidden flex flex-col min-h-[500px]">
-           <div className="flex border-b border-white/5 px-6 pt-6 gap-2">
+           <div className="flex border-b border-white/5 px-4 md:px-6 pt-6 gap-2 overflow-x-auto">
               <TabButton active={activeTab === 'events'} onClick={() => setActiveTab('events')} label="Events" icon={Calendar} count={events.length} />
               <TabButton active={activeTab === 'news'} onClick={() => setActiveTab('news')} label="News" icon={Newspaper} count={news.length} />
               <TabButton active={activeTab === 'gallery'} onClick={() => setActiveTab('gallery')} label="Gallery" icon={ImageIcon} count={gallery.length} />
            </div>
 
-           <div className="p-6 flex justify-between items-center bg-[#0C101C]/30">
-              <div className="relative w-64">
+           <div className="p-4 md:p-6 flex flex-col md:flex-row gap-4 justify-between items-center bg-[#0C101C]/30">
+              <div className="relative w-full md:w-64">
                  <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
                  <input type="text" placeholder={`Search ${activeTab}...`} className="w-full bg-[#151b2b] border border-white/10 rounded-lg py-2 pl-9 pr-4 text-xs text-white focus:border-[#E7B95A] outline-none" />
               </div>
-              <Link href={`/admin/${activeTab}/create`} className="bg-[#E7B95A] text-[#0C101C] px-4 py-2 rounded-lg text-xs font-bold hover:bg-[#F4D03F] transition-colors flex items-center gap-2">
+              <Link href={`/admin/${activeTab}/create`} className="w-full md:w-auto justify-center bg-[#E7B95A] text-[#0C101C] px-4 py-2 rounded-lg text-xs font-bold hover:bg-[#F4D03F] transition-colors flex items-center gap-2">
                  <Plus size={14} /> Add New
               </Link>
            </div>
 
-           <div className="flex-1 p-6">
+           <div className="flex-1 p-4 md:p-6 overflow-x-auto">
               {loading ? (
                  <div className="h-full flex flex-col items-center justify-center py-12">
                     <Loader2 className="w-8 h-8 text-[#E7B95A] animate-spin mb-4" />
@@ -228,7 +249,7 @@ export default function AdminDashboard() {
                     <p className="text-gray-500 text-xs">This folder is currently empty.</p>
                  </div>
               ) : (
-                 <div className="space-y-2">
+                 <div className="space-y-2 min-w-[600px] md:min-w-0">
                     <div className="grid grid-cols-12 gap-4 px-4 py-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
                        <div className="col-span-6 md:col-span-5">Title / Caption</div>
                        <div className="col-span-3">Date</div>
@@ -294,7 +315,7 @@ export default function AdminDashboard() {
 
 function TabButton({ active, onClick, label, icon: Icon, count }: any) {
   return (
-    <button onClick={onClick} className={`pb-4 px-6 text-sm font-bold border-b-2 transition-all flex items-center gap-2 relative ${active ? 'text-[#E7B95A] border-[#E7B95A]' : 'text-gray-500 border-transparent hover:text-white'}`}>
+    <button onClick={onClick} className={`pb-4 px-6 text-sm font-bold border-b-2 transition-all flex items-center gap-2 relative whitespace-nowrap ${active ? 'text-[#E7B95A] border-[#E7B95A]' : 'text-gray-500 border-transparent hover:text-white'}`}>
        <Icon size={16} />
        {label}
        {count > 0 && <span className={`ml-2 px-1.5 py-0.5 rounded-full text-[10px] ${active ? 'bg-[#E7B95A] text-[#0C101C]' : 'bg-white/10 text-gray-400'}`}>{count}</span>}

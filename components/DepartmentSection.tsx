@@ -53,35 +53,34 @@ const divisions = [
 
 export default function DepartmentSection() {
   const { scrollYProgress } = useScroll();
-  
   const yBg = useTransform(scrollYProgress, [0, 1], [0, -50]);
 
   return (
     <section className="relative py-32 bg-[#0C101C] text-white overflow-hidden">
       
+      <div className="absolute top-[15%] right-[-10%] w-[500px] h-[500px] bg-[#3386B7] rounded-full blur-[180px] opacity-20 z-0 animate-pulse duration-[8000ms]" />
+      <div className="absolute bottom-[15%] left-[-10%] w-[500px] h-[500px] bg-[#214664] rounded-full blur-[180px] opacity-30 z-0 animate-pulse duration-[10000ms]" />
+
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-[#3386B7]/10 z-0 overflow-hidden">
          <motion.div
            animate={{ top: ["-20%", "120%"] }}
-           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-           className="absolute top-0 left-0 w-full h-[150px] bg-gradient-to-b from-transparent via-white to-transparent opacity-50"
+           transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+           className="absolute top-0 left-0 w-full h-[150px] bg-gradient-to-b from-transparent via-white to-transparent opacity-40"
          />
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
         
         <div className="text-center mb-32 relative">
-           
            <motion.h2 
              initial={{ opacity: 0, y: 30 }}
              whileInView={{ opacity: 1, y: 0 }}
              viewport={{ once: true }}
-             transition={{ duration: 0.7 }}
+             transition={{ duration: 0.8 }}
              className="text-4xl md:text-6xl font-bold mb-4"
            >
              Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7AABC3] to-[#3386B7]">Departments</span>
            </motion.h2>
-           
-
         </div>
 
         <div className="flex flex-col gap-32">
@@ -91,7 +90,7 @@ export default function DepartmentSection() {
             return (
               <motion.div 
                 key={div.id}
-                initial={{ opacity: 0, y: 100 }}
+                initial={{ opacity: 0, y: 80 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-10%" }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
@@ -99,7 +98,9 @@ export default function DepartmentSection() {
               >
                 
                 <div className="w-full md:w-1/2 relative group perspective-1000">
-                                
+                  
+                  <div className="absolute -inset-[2px] rounded-3xl bg-gradient-to-r from-[#7AABC3] via-[#3386B7] via-[#214664] to-[#E7B95A] opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-[3px]" />
+
                   <motion.div 
                     initial={{ width: 0, opacity: 0 }}
                     whileInView={{ width: "40px", opacity: 1 }}
@@ -114,7 +115,7 @@ export default function DepartmentSection() {
                     className={`hidden md:block absolute top-1/2 -translate-y-1/2 w-2 h-2 bg-[#E7B95A] rounded-full shadow-[0_0_10px_#E7B95A] ${isEven ? '-right-11' : '-left-11'}`} 
                   />
 
-                  <div className="relative aspect-[16/10] w-full rounded-3xl overflow-hidden border border-white/10 group-hover:border-[#E7B95A]/50 transition-all duration-500 shadow-2xl bg-[#151b2b]">
+                  <div className="relative aspect-[16/10] w-full rounded-3xl overflow-hidden border border-white/10 group-hover:border-transparent transition-all duration-500 shadow-2xl bg-[#151b2b]">
                     <div className="absolute inset-0 bg-[#151b2b] animate-pulse" /> 
                     
                     <Image 
@@ -124,35 +125,27 @@ export default function DepartmentSection() {
                       className="object-contain p-6 md:p-8 transition-transform duration-1000 ease-out"
                     />
 
-                    <div className="absolute bottom-3 right-4 text-[10px] text-white/50 bg-black/30 px-2 py-1 rounded-full backdrop-blur">
-                      Illustration by{" "}
-                      <a
-                        href="https://storyset.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline hover:text-white"
-                      >
-                        Storyset
-                      </a>
+                    <div className="absolute bottom-3 right-4 text-[10px] text-white/50 bg-black/30 px-2 py-1 rounded-full backdrop-blur z-20">
+                      Illustration by Storyset
                     </div>
                     
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0C101C] via-transparent to-transparent opacity-80" />
-                    <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:left-[100%] transition-all duration-1000 ease-in-out transform -skew-x-12" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0C101C] via-transparent to-transparent opacity-80 z-10" />
+                    <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:left-[100%] transition-all duration-1000 ease-in-out transform -skew-x-12 z-20" />
                   </div>
                 </div>
 
                 <div className={`w-full md:w-1/2 ${isEven ? 'text-left' : 'text-left md:text-right'}`}>
                   
                   <motion.div 
-                    initial={{ scale: 0.8, opacity: 0 }}
+                    initial={{ scale: 0.9, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    className={`inline-flex items-center justify-center p-4 rounded-2xl bg-[#3386B7]/5 border border-[#3386B7]/20 text-[#3386B7] mb-6 group-hover:bg-[#E7B95A]/10 group-hover:text-[#E7B95A] group-hover:border-[#E7B95A]/30 transition-all duration-300 ${!isEven && 'md:ml-auto'}`}
+                    className={`inline-flex items-center justify-center p-4 rounded-2xl bg-[#3386B7]/5 border border-[#3386B7]/20 text-[#3386B7] mb-6 backdrop-blur-sm shadow-lg ${!isEven && 'md:ml-auto'}`}
                   >
                     <div.icon size={32} />
                   </motion.div>
                   
-                  <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 group-hover:text-[#E7B95A] transition-colors duration-300">
+                  <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 hover:text-[#E7B95A] transition-colors duration-300">
                     {div.name}
                   </h3>
                   
@@ -160,14 +153,17 @@ export default function DepartmentSection() {
                     {div.desc}
                   </p>
 
-                  <Link href="/departments">
-                    <motion.button 
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`flex items-center gap-2 px-8 py-3 rounded-full border border-white/20 text-white hover:border-[#E7B95A] hover:text-[#E7B95A] hover:bg-[#E7B95A]/5 transition-all font-semibold tracking-wide ${!isEven && 'md:ml-auto'}`}
-                    >
-                      Explore Department <ArrowRight size={18} />
-                    </motion.button>
+                  <Link href="/departments" className="inline-block group/btn">
+                    <div className="relative">
+                        <div className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-[#7AABC3] via-[#3386B7] via-[#214664] to-[#E7B95A] opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 blur-[2px]" />
+                        <motion.button 
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`relative flex items-center gap-2 px-8 py-3 rounded-full border border-white/20 bg-[#0C101C] text-white group-hover/btn:border-transparent group-hover/btn:text-[#E7B95A] transition-all font-semibold tracking-wide ${!isEven && 'md:ml-auto'}`}
+                        >
+                        Explore Department <ArrowRight size={18} />
+                        </motion.button>
+                    </div>
                   </Link>
                 </div>
 
