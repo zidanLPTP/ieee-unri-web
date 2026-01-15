@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image'
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
@@ -51,11 +52,18 @@ export default function Navbar() {
 
             <div className="relative bg-[#0C101C]/90 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 shadow-2xl flex items-center justify-between transition-all duration-300 group-hover:border-transparent">
             
-                <Link href="/" className="flex items-center gap-2 shrink-0 pl-2">
-                    <div className="font-bold text-xl tracking-tighter text-white">
-                    IEEE <span className="text-[#E7B95A] drop-shadow-[0_0_10px_rgba(231,185,90,0.5)]">UNRI</span>
-                    </div>
-                </Link>
+              <Link href="/" className="flex items-center gap-2 shrink-0 pl-2">
+                <div className="w-28 h-auto">
+                  <Image
+                    src="/ieeeunri.jpg"
+                    alt="IEEE UNRI"
+                    width={70}
+                    height={20}
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+              </Link>
 
                 <ul className="hidden md:flex items-center gap-1 ml-auto">
                     {navLinks.map((link) => {
