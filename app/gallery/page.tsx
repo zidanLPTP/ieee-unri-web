@@ -8,6 +8,50 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { getPublicGallery } from '@/actions/landing-actions'; 
 
+const getBentoClass = (index: number, page: number) => {
+
+  const patternIndex = page % 3;
+
+  const layouts = [
+     [
+        "md:col-span-2 md:row-span-2", 
+        "md:col-span-1 md:row-span-1", 
+        "md:col-span-1 md:row-span-2", 
+        "md:col-span-1 md:row-span-1", 
+        "md:col-span-2 md:row-span-1", 
+        "md:col-span-1 md:row-span-1", 
+        "md:col-span-1 md:row-span-1",
+        "md:col-span-2 md:row-span-1", 
+     ],
+ 
+     [
+        "md:col-span-1 md:row-span-2", 
+        "md:col-span-2 md:row-span-1",
+        "md:col-span-1 md:row-span-1",
+        "md:col-span-1 md:row-span-2", 
+        "md:col-span-2 md:row-span-2", 
+        "md:col-span-1 md:row-span-1", 
+        "md:col-span-1 md:row-span-1", 
+        "md:col-span-2 md:row-span-1", 
+     ],
+
+     [
+        "md:col-span-1 md:row-span-1", 
+        "md:col-span-1 md:row-span-1", 
+        "md:col-span-2 md:row-span-2", 
+        "md:col-span-1 md:row-span-1", 
+        "md:col-span-1 md:row-span-2", 
+        "md:col-span-1 md:row-span-1",
+        "md:col-span-2 md:row-span-1", 
+        "md:col-span-1 md:row-span-1", 
+     ]
+  ];
+
+  const currentLayout = layouts[patternIndex];
+  return currentLayout[index % 8] || "md:col-span-1 md:row-span-1";
+};
+
+
 export default function GalleryPage() {
   const [gallery, setGallery] = useState<any[]>([]);
   const [selectedImage, setSelectedImage] = useState<any | null>(null);
@@ -53,10 +97,14 @@ export default function GalleryPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0C101C] text-white selection:bg-[#E7B95A] selection:text-[#0C101C]">
+    <main className="min-h-screen bg-[#0C101C] text-white selection:bg-[#E7B95A] selection:text-[#0C101C] relative overflow-hidden">
       <Navbar />
 
-      <section className="pt-32 pb-12 px-6 text-center">
+      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-[#3386B7] rounded-full blur-[200px] opacity-20 z-0 animate-pulse duration-[8000ms]" />
+
+      <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.03] z-0 pointer-events-none" />
+
+      <section className="pt-32 pb-12 px-6 text-center relative z-10">
          <h1 className="text-4xl md:text-6xl font-extrabold mb-4">
             Captured <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E7B95A] to-[#F4D03F]">Moments</span>
          </h1>
@@ -65,7 +113,7 @@ export default function GalleryPage() {
          </p>
       </section>
 
-      <section className="px-4 md:px-8 pb-32 container mx-auto">
+      <section className="px-4 md:px-8 pb-32 container mx-auto relative z-10">
          
          {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20">
@@ -74,42 +122,54 @@ export default function GalleryPage() {
             </div>
          ) : gallery.length > 0 ? (
             <>
-               <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-                  {gallery.map((item, idx) => (
-                     <motion.div 
-                       key={item.id}
-                       initial={{ opacity: 0, y: 20 }}
-                       whileInView={{ opacity: 1, y: 0 }}
-                       viewport={{ once: true }}
-                       transition={{ delay: idx * 0.05 }}
-                       className="break-inside-avoid relative group rounded-2xl overflow-hidden bg-[#151b2b] border border-white/5 mb-4 cursor-pointer"
-                       onClick={() => setSelectedImage(item)}
-                     >
+               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[250px] md:auto-rows-[280px]">
+                  {gallery.map((item, idx) => {
+   
+                     const spanClass = getBentoClass(idx, page);
+                     
+                     return (
+                        <motion.div 
+                          key={item.id}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.4, delay: idx * 0.05 }}
+                          className={`relative group rounded-3xl overflow-hidden bg-[#151b2b] border border-white/5 cursor-pointer shadow-lg ${spanClass}`}
+                          onClick={() => setSelectedImage(item)}
+                        >
 
-                        <div className="relative w-full">
-                           <img 
-                              src={item.image || "/placeholder-gallery.jpg"} 
-                              alt={item.caption} 
-                              className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700" 
-                              loading="lazy"
-                           />
-                           
-                           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <ZoomIn className="text-white" size={32} />
-                           </div>
-                        </div>
+                           <div className="relative w-full h-full">
+                              <Image 
+                                 src={item.image || "/placeholder-gallery.jpg"} 
+                                 alt={item.caption} 
+                                 fill
+                                 className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" 
+                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              />
+                              
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+                              
+                              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                 <div className="bg-white/10 backdrop-blur-md p-3 rounded-full border border-white/20">
+                                    <ZoomIn className="text-white" size={24} />
+                                 </div>
+                              </div>
 
-                        <div className="p-4 bg-[#151b2b]">
-                           <p className="text-sm font-bold text-white line-clamp-2 leading-snug">
-                              {item.caption}
-                           </p>
-                           <div className="flex justify-between items-center mt-3 text-[10px] text-gray-500 uppercase tracking-wider">
-                              <span className="bg-white/5 px-2 py-1 rounded">{item.tag}</span>
-                              <span>{item.date}</span>
+                              <div className="absolute bottom-0 left-0 w-full p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                 <span className="inline-block bg-[#E7B95A] text-[#0C101C] text-[10px] font-bold px-2 py-0.5 rounded mb-2 uppercase tracking-wide">
+                                    {item.tag}
+                                 </span>
+                                 <p className="text-sm md:text-base font-bold text-white line-clamp-2 leading-tight mb-1 text-shadow-sm">
+                                    {item.caption}
+                                 </p>
+                                 <p className="text-[10px] text-gray-300 font-mono opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                                    {item.date}
+                                 </p>
+                              </div>
                            </div>
-                        </div>
-                     </motion.div>
-                  ))}
+                        </motion.div>
+                     );
+                  })}
                </div>
 
                <div className="flex justify-center items-center gap-6 mt-16">

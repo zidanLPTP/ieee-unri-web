@@ -5,44 +5,37 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { 
-  // Icons Sidebar
   LayoutDashboard, Users, UserPlus, Newspaper, Calendar, LogOut, Image as ImageIcon,
-  // Icons UI
-  Search, ChevronLeft, ChevronRight, ShieldAlert, Trash2, ShieldCheck, RefreshCw
+  Search, ChevronLeft, ChevronRight, ShieldAlert, Trash2, ShieldCheck, RefreshCw, Menu, X
 } from 'lucide-react';
 import { logoutAction } from '@/actions/auth-actions';
-import { getOfficers, deleteOfficer } from '@/actions/officer-actions'; // Import Action baru
+import { getOfficers, deleteOfficer } from '@/actions/officer-actions';
 
 export default function AllPersonnelPage() {
   const router = useRouter();
   
-  // --- STATE USER & AUTH ---
   const [user, setUser] = useState({ name: 'Admin', role: 'Staff' });
   const [accessDenied, setAccessDenied] = useState(false);
   
-  // --- STATE DATA ---
   const [officers, setOfficers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // --- STATE PAGINATION & SEARCH ---
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // --- 1. LOAD USER & CEK AKSES ---
   useEffect(() => {
     const storedUser = localStorage.getItem('adminUser');
     if (storedUser) {
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);
 
-        // RESTRICT ACCESS: Staff/Anggota DILARANG MASUK
         const allowed = ['ADMIN', 'CORE', 'HEAD'];
         if (!allowed.includes(parsedUser.role)) {
             setAccessDenied(true);
-            setLoading(false); // Stop loading biar UI denied muncul
+            setLoading(false); 
         } else {
-            // Jika boleh akses, load data
             fetchData(1, ""); 
         }
     } else {
@@ -50,7 +43,6 @@ export default function AllPersonnelPage() {
     }
   }, [router]);
 
-  // --- 2. FUNGSI LOAD DATA (Server Action) ---
   const fetchData = async (pageNum: number, searchQuery: string) => {
     setLoading(true);
     const res = await getOfficers(pageNum, searchQuery);
@@ -63,27 +55,24 @@ export default function AllPersonnelPage() {
     setLoading(false);
   };
 
-  // Handler Search (Debounce manual sederhana)
   useEffect(() => {
     if (!accessDenied) {
         const delayDebounce = setTimeout(() => {
-            setPage(1); // Reset ke hal 1 tiap cari
+            setPage(1); 
             fetchData(1, search);
-        }, 500); // Tunggu 500ms setelah ketik
+        }, 500); 
 
         return () => clearTimeout(delayDebounce);
     }
   }, [search]);
 
-  // Handler Pagination
   const handleNext = () => { if (page < totalPages) fetchData(page + 1, search); };
   const handlePrev = () => { if (page > 1) fetchData(page - 1, search); };
 
-  // Handler Delete
   const handleDelete = async (id: number, name: string) => {
     if (confirm(`Yakin ingin menghapus ${name}?`)) {
         await deleteOfficer(id);
-        fetchData(page, search); // Refresh data
+        fetchData(page, search); 
     }
   };
 
@@ -94,16 +83,31 @@ export default function AllPersonnelPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#0C101C] text-white selection:bg-[#E7B95A] selection:text-[#0C101C]">
+    <div className="flex min-h-screen bg-[#0C101C] text-white selection:bg-[#E7B95A] selection:text-[#0C101C] relative">
       
-      {/* --- SIDEBAR BUILT-IN --- */}
-      <aside className="w-64 bg-[#151b2b] border-r border-white/5 flex-col hidden md:flex sticky top-0 h-screen overflow-y-auto shrink-0 z-50">
-        <div className="p-8 flex items-center gap-3">
-          <div className="w-8 h-8 rounded bg-gradient-to-br from-[#E7B95A] to-[#F4D03F] flex items-center justify-center text-[#0C101C] font-bold">I</div>
-          <div>
-            <h1 className="font-bold text-lg leading-none">IEEE Admin</h1>
-            <span className="text-[10px] text-gray-500 uppercase tracking-wider">Control Panel</span>
+      {isSidebarOpen && (
+        <div 
+            className="fixed inset-0 bg-black/80 z-40 md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <aside className={`
+          fixed inset-y-0 left-0 z-50 w-64 bg-[#151b2b] border-r border-white/5 flex flex-col h-screen overflow-y-auto transition-transform duration-300 ease-in-out shrink-0
+          md:translate-x-0 md:static md:sticky md:top-0
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <div className="p-8 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded bg-gradient-to-br from-[#E7B95A] to-[#F4D03F] flex items-center justify-center text-[#0C101C] font-bold">I</div>
+            <div>
+                <h1 className="font-bold text-lg leading-none">IEEE Admin</h1>
+                <span className="text-[10px] text-gray-500 uppercase tracking-wider">Control Panel</span>
+            </div>
           </div>
+          <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-gray-400 hover:text-white">
+            <X size={24} />
+          </button>
         </div>
 
         <nav className="flex-1 px-4 space-y-2">
@@ -112,7 +116,6 @@ export default function AllPersonnelPage() {
           </Link>
           <div className="mt-6 mb-2 px-4 text-[10px] font-bold text-gray-500 uppercase tracking-wider">Personnel Management</div>
           
-          {/* ACTIVE STATE: YELLOW */}
           <Link href="/admin/pengurus" className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold bg-[#E7B95A] text-[#0C101C] shadow-lg shadow-yellow-500/10">
              <Users size={18} /> All Personnel
           </Link>
@@ -150,10 +153,16 @@ export default function AllPersonnelPage() {
         </div>
       </aside>
 
-      <main className="flex-1 h-screen overflow-y-auto relative">
+      <main className="flex-1 h-screen overflow-y-auto relative w-full">
       
         {accessDenied ? (
             <div className="h-full flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in duration-300">
+                <button 
+                  onClick={() => setIsSidebarOpen(true)} 
+                  className="md:hidden absolute top-4 left-4 p-2 bg-[#151b2b] rounded-lg text-[#E7B95A] border border-white/10"
+                >
+                  <Menu size={24} />
+                </button>
                 <div className="w-24 h-24 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(239,68,68,0.2)]">
                     <ShieldAlert size={48} />
                 </div>
@@ -171,10 +180,18 @@ export default function AllPersonnelPage() {
         ) : (
             
         <>
-           <div className="sticky top-0 z-30 bg-[#0C101C]/80 backdrop-blur-md border-b border-white/5 px-8 py-5 flex flex-col md:flex-row justify-between items-center gap-4 shadow-md">
-              <div>
-                 <h1 className="font-bold text-lg text-white">Personnel Data</h1>
-                 <p className="text-[10px] text-gray-500 uppercase tracking-wide">Manage organization members</p>
+           <div className="sticky top-0 z-30 bg-[#0C101C]/80 backdrop-blur-md border-b border-white/5 px-4 md:px-8 py-5 flex flex-col md:flex-row justify-between items-center gap-4 shadow-md">
+              <div className="flex items-center gap-4 w-full md:w-auto">
+                 <button 
+                    onClick={() => setIsSidebarOpen(true)} 
+                    className="md:hidden p-2 bg-[#151b2b] rounded-lg text-[#E7B95A] border border-white/10 hover:bg-white/5 shrink-0"
+                 >
+                    <Menu size={24} />
+                 </button>
+                 <div>
+                    <h1 className="font-bold text-lg text-white">Personnel Data</h1>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wide">Manage organization members</p>
+                 </div>
               </div>
 
               <div className="flex items-center gap-3 w-full md:w-auto">
@@ -188,16 +205,14 @@ export default function AllPersonnelPage() {
                       className="w-full bg-[#151b2b] border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:border-[#E7B95A] outline-none"
                     />
                  </div>
-                 <Link href="/admin/pengurus/add" className="bg-[#E7B95A] hover:bg-[#F4D03F] text-[#0C101C] px-4 py-2.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 whitespace-nowrap shadow-lg">
+                 <Link href="/admin/pengurus/add" className="bg-[#E7B95A] hover:bg-[#F4D03F] text-[#0C101C] px-4 py-2.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 whitespace-nowrap shadow-lg shrink-0">
                     <UserPlus size={16} /> Add New
                  </Link>
               </div>
            </div>
 
-           {/* CONTENT AREA */}
-           <div className="p-6 md:p-8">
+           <div className="p-4 md:p-8">
               
-              {/* TABEL DATA */}
               <div className="bg-[#151b2b] border border-white/5 rounded-3xl overflow-hidden shadow-xl">
                  {loading ? (
                     <div className="p-12 flex flex-col items-center justify-center text-gray-500">
@@ -206,7 +221,7 @@ export default function AllPersonnelPage() {
                     </div>
                  ) : (
                     <div className="overflow-x-auto">
-                       <table className="w-full text-left border-collapse">
+                       <table className="w-full text-left border-collapse min-w-[800px] md:min-w-0">
                           <thead>
                              <tr className="bg-[#0C101C]/50 border-b border-white/5 text-gray-400 text-[10px] uppercase tracking-wider">
                                 <th className="p-5 font-bold">Member Profile</th>
@@ -232,7 +247,9 @@ export default function AllPersonnelPage() {
                                             </div>
                                             <div>
                                                <div className="font-bold text-white text-sm">{officer.name}</div>
-                                               <div className="text-gray-500 text-[10px] font-mono mt-0.5">ID: <span className="text-[#E7B95A]">{officer.memberId}</span></div>
+                                               <div className="text-gray-500 text-[10px] font-mono mt-0.5">
+                                                ID: <span className="text-[#E7B95A]">{officer.memberId}</span>
+                                             </div>
                                             </div>
                                          </div>
                                       </td>
@@ -255,7 +272,7 @@ export default function AllPersonnelPage() {
                                       <td className="p-5 text-right">
                                          <button 
                                             onClick={() => handleDelete(officer.id, officer.name)}
-                                            className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                            className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all md:opacity-0 md:group-hover:opacity-100 opacity-100"
                                             title="Delete Member"
                                          >
                                             <Trash2 size={16} />
@@ -270,7 +287,6 @@ export default function AllPersonnelPage() {
                  )}
               </div>
 
-              {/* PAGINATION CONTROLS */}
               {totalPages > 1 && (
                  <div className="flex items-center justify-between border-t border-white/5 pt-6 mt-2">
                     <p className="text-xs text-gray-500">

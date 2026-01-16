@@ -17,16 +17,13 @@ const SINGLE_ROLES = [
   "Counselor"
 ];
 
-// --- CREATE OFFICER ---
+
 export async function createOfficer(formData: FormData) {
   try {
     const name = formData.get("name") as string;
     const memberId = formData.get("memberId") as string;
     const position = formData.get("position") as string;
     const division = formData.get("division") as string;
-    
-    // 2. CASTING KE TIPE ROLE DISINI
-    // Kita paksa string dari form menjadi tipe 'Role'
     const rawRole = formData.get("accessRole") as string;
     const accessRole: Role = (rawRole as Role) || "STAFF"; 
     
@@ -36,7 +33,6 @@ export async function createOfficer(formData: FormData) {
        return { success: false, error: "Mohon lengkapi data wajib." };
     }
 
-    // Validasi Member ID
     const existingUser = await prisma.officer.findUnique({
       where: { memberId: memberId }
     });
@@ -44,7 +40,6 @@ export async function createOfficer(formData: FormData) {
         return { success: false, error: "Member ID sudah terdaftar." };
     }
 
-    // Validasi Single Roles
     if (SINGLE_ROLES.includes(position)) {
         const existingRole = await prisma.officer.findFirst({
             where: { 
@@ -57,7 +52,6 @@ export async function createOfficer(formData: FormData) {
         }
     }
 
-    // Validasi Head
     if (position === "Head of Division") {
         const existingHead = await prisma.officer.findFirst({
             where: { 
@@ -71,14 +65,13 @@ export async function createOfficer(formData: FormData) {
         }
     }
 
-    // Simpan File
     let imagePath = null;
     if (imageFile && imageFile.size > 0) {
         const savedPath = await saveFile(imageFile, "officers");
         if (savedPath) imagePath = savedPath;
     }
 
-    // Simpan ke DB
+
     const hashedPassword = await bcrypt.hash(memberId || "defaultPassword", 10);
     
     await prisma.officer.create({
@@ -88,7 +81,7 @@ export async function createOfficer(formData: FormData) {
         password: hashedPassword,
         position,
         division,
-        accessRole: accessRole, // <--- Sekarang ini sudah aman (Tipe Role)
+        accessRole: accessRole,
         image: imagePath, 
         order: 100,
       }
@@ -103,7 +96,6 @@ export async function createOfficer(formData: FormData) {
   }
 }
 
-// ... (Fungsi deleteOfficer dan getOfficers biarkan tetap sama) ...
 export async function deleteOfficer(id: number) {
   try {
     const officer = await prisma.officer.findUnique({

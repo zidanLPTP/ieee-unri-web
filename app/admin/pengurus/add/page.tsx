@@ -6,13 +6,11 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Upload, Save, User, Hash, ShieldCheck, Briefcase, 
-  // Icon Sidebar
   LayoutDashboard, Users, UserPlus, Newspaper, Calendar, LogOut, Image as ImageIcon,
-  // Icon untuk Access Denied
-  ShieldAlert, Lock
+  ShieldAlert, Lock, Menu, X
 } from 'lucide-react';
 import { logoutAction } from '@/actions/auth-actions';
-import { createOfficer } from '@/actions/officer-actions'; // Import Action
+import { createOfficer } from '@/actions/officer-actions';
 
 const OPERATIONAL_DIVISIONS = [
   "Secretariat",
@@ -27,12 +25,10 @@ const POSITIONS = [
   { label: "Staff", value: "Staff" },
   { label: "Head of Division", value: "Head of Division" },
   { label: "Web Master", value: "Web Master" },
-  // Core Leaders
   { label: "Director", value: "Director" },
   { label: "Vice Director I", value: "Vice Director I" },
   { label: "Vice Director II", value: "Vice Director II" },
   { label: "Vice Director III", value: "Vice Director III" },
-  // Advisory
   { label: "Advisor", value: "Advisor" },
   { label: "Counselor", value: "Counselor" },
 ];
@@ -44,14 +40,14 @@ export default function AddOfficerPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [accessDenied, setAccessDenied] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Load User & Check Access
   useEffect(() => {
     const storedUser = localStorage.getItem('adminUser');
     if (storedUser) {
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);
-        // Validasi Role yang boleh akses halaman ini
+        
         const allowed = ['ADMIN', 'CORE', 'HEAD'];
         if (!allowed.includes(parsedUser.role)) {
             setAccessDenied(true);
@@ -67,22 +63,19 @@ export default function AddOfficerPage() {
     router.push('/login');
   };
 
-  // --- FORM STATE ---
   const [formData, setFormData] = useState({
     name: '',
     memberId: '',
     position: 'Staff',
     division: OPERATIONAL_DIVISIONS[0],
-    image: null as string | null, // URL Preview
+    image: null as string | null, 
     accessRole: 'STAFF'
   });
 
-  // STATE BARU: Simpan File Fisik
   const [file, setFile] = useState<File | null>(null);
 
   const [showDivisionDropdown, setShowDivisionDropdown] = useState(true);
 
-  // Logic Otomatis Access Role & Divisi
   useEffect(() => {
     let role = "STAFF";
     let div = formData.division;
@@ -120,15 +113,12 @@ export default function AddOfficerPage() {
   const handleImageUpload = (e: any) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      // 1. Simpan File Asli
       setFile(selectedFile);
-      // 2. Buat Preview
       const imageUrl = URL.createObjectURL(selectedFile);
       setFormData(prev => ({ ...prev, image: imageUrl }));
     }
   };
 
-  // --- SAVE DATA (Pake FormData) ---
   const handleSave = async () => {
     if (!formData.name || !formData.memberId) {
       alert("Harap lengkapi Nama dan Member ID.");
@@ -137,7 +127,6 @@ export default function AddOfficerPage() {
     
     setIsSubmitting(true);
     try {
-        // SIAPKAN FORM DATA
         const data = new FormData();
         data.append("name", formData.name);
         data.append("memberId", formData.memberId);
@@ -145,7 +134,6 @@ export default function AddOfficerPage() {
         data.append("division", formData.division);
         data.append("accessRole", formData.accessRole);
         
-        // Masukkan File Foto jika ada
         if (file) {
             data.append("image", file);
         }
@@ -168,16 +156,31 @@ export default function AddOfficerPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#0C101C] text-white selection:bg-[#E7B95A] selection:text-[#0C101C]">
+    <div className="flex min-h-screen bg-[#0C101C] text-white selection:bg-[#E7B95A] selection:text-[#0C101C] relative">
       
-      {/* --- SIDEBAR --- */}
-      <aside className="w-64 bg-[#151b2b] border-r border-white/5 flex-col hidden md:flex sticky top-0 h-screen overflow-y-auto shrink-0 z-50">
-        <div className="p-8 flex items-center gap-3">
-          <div className="w-8 h-8 rounded bg-gradient-to-br from-[#E7B95A] to-[#F4D03F] flex items-center justify-center text-[#0C101C] font-bold">I</div>
-          <div>
-            <h1 className="font-bold text-lg leading-none">IEEE Admin</h1>
-            <span className="text-[10px] text-gray-500 uppercase tracking-wider">Control Panel</span>
+      {isSidebarOpen && (
+        <div 
+            className="fixed inset-0 bg-black/80 z-40 md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <aside className={`
+          fixed inset-y-0 left-0 z-50 w-64 bg-[#151b2b] border-r border-white/5 flex flex-col h-screen overflow-y-auto transition-transform duration-300 ease-in-out shrink-0
+          md:translate-x-0 md:static md:sticky md:top-0
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <div className="p-8 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded bg-gradient-to-br from-[#E7B95A] to-[#F4D03F] flex items-center justify-center text-[#0C101C] font-bold">I</div>
+            <div>
+              <h1 className="font-bold text-lg leading-none">IEEE Admin</h1>
+              <span className="text-[10px] text-gray-500 uppercase tracking-wider">Control Panel</span>
+            </div>
           </div>
+          <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-gray-400 hover:text-white">
+            <X size={24} />
+          </button>
         </div>
 
         <nav className="flex-1 px-4 space-y-2">
@@ -189,7 +192,6 @@ export default function AddOfficerPage() {
              <Users size={18} /> All Personnel
           </Link>
           
-          {/* ACTIVE MENU */}
           <Link href="/admin/pengurus/add" className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold bg-[#E7B95A] text-[#0C101C] shadow-lg shadow-yellow-500/10">
              <UserPlus size={18} /> Add New
           </Link>
@@ -223,10 +225,16 @@ export default function AddOfficerPage() {
         </div>
       </aside>
 
-      <main className="flex-1 h-screen overflow-y-auto relative pb-20">
+      <main className="flex-1 h-screen overflow-y-auto relative pb-20 w-full">
         
         {accessDenied ? (
-            <div className="h-full flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in duration-300">
+            <div className="h-full flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in duration-300 relative">
+                <button 
+                  onClick={() => setIsSidebarOpen(true)} 
+                  className="md:hidden absolute top-4 left-4 p-2 bg-[#151b2b] rounded-lg text-[#E7B95A] border border-white/10"
+                >
+                  <Menu size={24} />
+                </button>
                 <div className="w-24 h-24 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(239,68,68,0.2)]">
                     <ShieldAlert size={48} />
                 </div>
@@ -244,15 +252,20 @@ export default function AddOfficerPage() {
         ) : (
             
         <>
-            {/* HEADER */}
-            <div className="sticky top-0 z-30 bg-[#0C101C]/80 backdrop-blur-md border-b border-white/5 px-8 py-5 flex justify-between items-center shadow-md">
+            <div className="sticky top-0 z-30 bg-[#0C101C]/80 backdrop-blur-md border-b border-white/5 px-4 md:px-8 py-5 flex justify-between items-center shadow-md gap-4">
                 <div className="flex items-center gap-4">
-                    <div className="p-2 rounded-full bg-white/5 text-[#E7B95A]">
+                    <button 
+                        onClick={() => setIsSidebarOpen(true)} 
+                        className="md:hidden p-2 bg-[#151b2b] rounded-lg text-[#E7B95A] border border-white/10 hover:bg-white/5"
+                    >
+                        <Menu size={24} />
+                    </button>
+                    <div className="p-2 rounded-full bg-white/5 text-[#E7B95A] hidden md:block">
                         <UserPlus size={20} />
                     </div>
                     <div>
                         <h1 className="font-bold text-lg text-white">Add New Personnel</h1>
-                        <p className="text-[10px] text-gray-500 uppercase tracking-wide">Register Member & Assign Roles</p>
+                        <p className="text-[10px] text-gray-500 uppercase tracking-wide hidden md:block">Register Member & Assign Roles</p>
                     </div>
                 </div>
                 
@@ -261,21 +274,19 @@ export default function AddOfficerPage() {
                         onClick={handleSave}
                         disabled={isSubmitting}
                         className={`
-                        px-6 py-2.5 rounded-xl text-sm font-bold text-[#0C101C] flex items-center gap-2
+                        px-4 md:px-6 py-2.5 rounded-xl text-sm font-bold text-[#0C101C] flex items-center gap-2
                         bg-[#E7B95A] hover:bg-[#F4D03F] transition-colors shadow-lg
-                        disabled:opacity-50 disabled:cursor-not-allowed
+                        disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap
                         `}
                     >
-                        {isSubmitting ? "Saving..." : <><Save size={16} /> Save Data</>}
+                        {isSubmitting ? "Saving..." : <><Save size={16} /> <span className="hidden md:inline">Save Data</span><span className="md:hidden">Save</span></>}
                     </button>
                 </div>
             </div>
 
-            {/* FORM AREA */}
-            <div className="container mx-auto px-6 md:px-8 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div className="container mx-auto px-4 md:px-8 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             <div className="lg:col-span-4 space-y-6">
-                {/* PHOTO UPLOAD CARD */}
                 <div className="bg-[#151b2b] border border-white/5 rounded-3xl p-6 md:p-8 text-center">
                     <div className="mb-6 relative mx-auto w-40 h-40">
                         <div className="relative w-full h-full bg-[#0C101C] border-2 border-dashed border-white/10 rounded-full hover:border-[#E7B95A] transition-colors flex flex-col items-center justify-center cursor-pointer group overflow-hidden">
