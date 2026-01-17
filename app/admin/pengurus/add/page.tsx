@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Upload, Save, User, Hash, ShieldCheck, Briefcase, 
   LayoutDashboard, Users, UserPlus, Newspaper, Calendar, LogOut, Image as ImageIcon,
-  ShieldAlert, Lock, Menu, X
+  ShieldAlert, Lock, Menu, X, UploadCloud
 } from 'lucide-react';
 import { logoutAction } from '@/actions/auth-actions';
 import { createOfficer } from '@/actions/officer-actions';
@@ -127,6 +127,37 @@ export default function AddOfficerPage() {
     
     setIsSubmitting(true);
     try {
+        let uploadedImageUrl = "";
+
+        if (file) {
+            const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+            const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+            if (!cloudName || !uploadPreset) {
+                alert(" Konfigurasi Cloudinary (.env) belum lengkap!");
+                setIsSubmitting(false);
+                return;
+            }
+
+            const formDataCloud = new FormData();
+            formDataCloud.append("file", file);
+            formDataCloud.append("upload_preset", uploadPreset);
+
+            const uploadRes = await fetch(
+                `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+                { method: "POST", body: formDataCloud }
+            );
+
+            const uploadData = await uploadRes.json();
+
+            if (uploadData.secure_url) {
+                uploadedImageUrl = uploadData.secure_url;
+            } else {
+                console.error("Cloudinary Error:", uploadData);
+                throw new Error("Gagal upload gambar ke Cloudinary");
+            }
+        }
+
         const data = new FormData();
         data.append("name", formData.name);
         data.append("memberId", formData.memberId);
@@ -134,8 +165,8 @@ export default function AddOfficerPage() {
         data.append("division", formData.division);
         data.append("accessRole", formData.accessRole);
         
-        if (file) {
-            data.append("image", file);
+        if (uploadedImageUrl) {
+            data.append("image", uploadedImageUrl);
         }
 
         const result = await createOfficer(data);

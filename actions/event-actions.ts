@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { saveFile } from "@/lib/upload"; 
+
 
 export async function createEvent(formData: FormData) {
   try {
@@ -14,13 +14,7 @@ export async function createEvent(formData: FormData) {
     const locationName = (formData.get("locationName") ?? "") as string;
     const regLink = (formData.get("regLink") ?? "") as string;
 
-    const imageFile = formData.get("image") as File;
-
-    let imagePath = ""; 
-    if (imageFile && imageFile.size > 0) {
-        const savedPath = await saveFile(imageFile, "events");
-        if (savedPath) imagePath = savedPath;
-    }
+    const imagePath = (formData.get("image") as string) || "";
 
     await prisma.event.create({
       data: {

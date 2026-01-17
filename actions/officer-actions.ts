@@ -2,11 +2,13 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { unlink } from "fs/promises";
-import path from "path";
 import bcrypt from "bcryptjs";
-import { saveFile } from "@/lib/upload";
-import { Role } from "@prisma/client"; // <--- 1. WAJIB IMPORT INI
+import { Role } from "@prisma/client";
+
+// HAPUS IMPORT INI (Tidak dipakai lagi)
+// import { unlink } from "fs/promises";
+// import path from "path";
+// import { saveFile } from "@/lib/upload";
 
 const SINGLE_ROLES = [
   "Director",
@@ -17,7 +19,6 @@ const SINGLE_ROLES = [
   "Counselor"
 ];
 
-
 export async function createOfficer(formData: FormData) {
   try {
     const name = formData.get("name") as string;
@@ -27,7 +28,7 @@ export async function createOfficer(formData: FormData) {
     const rawRole = formData.get("accessRole") as string;
     const accessRole: Role = (rawRole as Role) || "STAFF"; 
     
-    const imageFile = formData.get("image") as File;
+    const imagePath = (formData.get("image") as string) || null;
 
     if (!name || !memberId || !position || !division) {
        return { success: false, error: "Mohon lengkapi data wajib." };
@@ -64,13 +65,6 @@ export async function createOfficer(formData: FormData) {
             return { success: false, error: `Divisi ${division} sudah memiliki Head (${existingHead.name}).` };
         }
     }
-
-    let imagePath = null;
-    if (imageFile && imageFile.size > 0) {
-        const savedPath = await saveFile(imageFile, "officers");
-        if (savedPath) imagePath = savedPath;
-    }
-
 
     const hashedPassword = await bcrypt.hash(memberId || "defaultPassword", 10);
     
@@ -109,17 +103,6 @@ export async function deleteOfficer(id: number) {
     await prisma.officer.delete({
       where: { id },
     });
-
-    if (officer.image && !officer.image.includes("placeholder")) {
-      if (officer.image.startsWith("/uploads/")) {
-         try {
-            const filePath = path.join(process.cwd(), "public", officer.image);
-            await unlink(filePath);
-         } catch (e) {
-            console.error("Gagal menghapus file gambar:", e);
-         }
-      }
-    }
 
     revalidatePath("/admin/pengurus");
     return { success: true };

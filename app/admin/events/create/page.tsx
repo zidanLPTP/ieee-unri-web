@@ -83,6 +83,35 @@ export default function CreateEventPage() {
 
     setIsSubmitting(true);
     try {
+      let uploadedImageUrl = "";
+
+      if (posterFile) {
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+        if (!cloudName || !uploadPreset) {
+            alert("Konfigurasi Cloudinary belum dipasang di .env");
+            setIsSubmitting(false);
+            return;
+        }
+
+        const formDataCloud = new FormData();
+        formDataCloud.append("file", posterFile);
+        formDataCloud.append("upload_preset", uploadPreset);
+
+        const uploadRes = await fetch(
+            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+            { method: "POST", body: formDataCloud }
+        );
+
+        const uploadData = await uploadRes.json();
+
+        if (uploadData.secure_url) {
+            uploadedImageUrl = uploadData.secure_url;
+        } else {
+            throw new Error("Gagal upload gambar ke Cloudinary");
+        }
+      }
 
       const data = new FormData();
       
@@ -97,8 +126,8 @@ export default function CreateEventPage() {
       data.append("locationName", formData.locationName);
       data.append("regLink", formData.regLink);
       
-      if (posterFile) {
-        data.append("image", posterFile);
+      if (uploadedImageUrl) {
+        data.append("image", uploadedImageUrl);
       }
 
       const result = await createEvent(data);
@@ -111,7 +140,7 @@ export default function CreateEventPage() {
       }
     } catch (error) {
       console.error(error);
-      alert("Terjadi kesalahan sistem.");
+      alert("Terjadi kesalahan sistem saat upload.");
     } finally {
       setIsSubmitting(false);
     }

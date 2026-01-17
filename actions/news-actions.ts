@@ -1,7 +1,6 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { saveFile } from "@/lib/upload"; 
 
 export async function createNews(formData: FormData) {
   try {
@@ -9,20 +8,14 @@ export async function createNews(formData: FormData) {
     const content = formData.get("content") as string;
     const author = formData.get("author") as string;
     
-    const imageFile = formData.get("image") as File;
-    let imagePath = ""; 
+    const imagePath = formData.get("image") as string;
     
-    if (imageFile && imageFile.size > 0) {
-        const savedPath = await saveFile(imageFile, "news");
-        if (savedPath) imagePath = savedPath;
-    }
-
     await prisma.news.create({
       data: {
         title,
         content,
         author,
-        image: imagePath,
+        image: imagePath || "", 
         date: new Date(),
         category: "Update"
       },
@@ -31,6 +24,7 @@ export async function createNews(formData: FormData) {
     revalidatePath("/news");
     return { success: true };
   } catch (error) {
+    console.error("Gagal create news:", error);
     return { success: false, error: "Gagal" };
   }
 }

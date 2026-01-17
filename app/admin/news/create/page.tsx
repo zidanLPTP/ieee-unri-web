@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, CheckCircle, User, Clock, 
   ImageIcon, Eye,
-  LayoutDashboard, Users, UserPlus, Newspaper, Calendar, LogOut, Menu, X
+  LayoutDashboard, Users, UserPlus, Newspaper, Calendar, LogOut, Menu, X, UploadCloud
 } from 'lucide-react';
 import { logoutAction } from '@/actions/auth-actions';
 import { createNews } from '@/actions/news-actions'; 
@@ -47,9 +47,7 @@ export default function CreateNewsPage() {
   const handleImageUpload = (e: any) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-
       setFile(selectedFile);
-
       const imageUrl = URL.createObjectURL(selectedFile);
       setFormData(prev => ({ ...prev, cover: imageUrl }));
     }
@@ -63,13 +61,44 @@ export default function CreateNewsPage() {
 
     setIsSubmitting(true);
     try {
+        let uploadedImageUrl = "";
+
+        if (file) {
+            const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+            const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+            if (!cloudName || !uploadPreset) {
+                alert("Konfigurasi Cloudinary (.env) belum lengkap!");
+                setIsSubmitting(false);
+                return;
+            }
+
+            const formDataCloud = new FormData();
+            formDataCloud.append("file", file);
+            formDataCloud.append("upload_preset", uploadPreset);
+
+            const uploadRes = await fetch(
+                `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+                { method: "POST", body: formDataCloud }
+            );
+
+            const uploadData = await uploadRes.json();
+
+            if (uploadData.secure_url) {
+                uploadedImageUrl = uploadData.secure_url;
+            } else {
+                console.error("Cloudinary Error:", uploadData);
+                throw new Error("Gagal upload gambar ke Cloudinary");
+            }
+        }
+
         const data = new FormData();
         data.append("title", formData.title);
         data.append("content", formData.content);
         data.append("author", user.name);
-        
-        if (file) {
-            data.append("image", file);
+
+        if (uploadedImageUrl) {
+            data.append("image", uploadedImageUrl);
         }
 
         const result = await createNews(data);
@@ -82,7 +111,7 @@ export default function CreateNewsPage() {
         }
     } catch (error) {
         console.error(error);
-        alert("Terjadi kesalahan sistem.");
+        alert("Terjadi kesalahan sistem saat upload.");
     } finally {
         setIsSubmitting(false);
     }

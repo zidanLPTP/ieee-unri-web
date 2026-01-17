@@ -20,12 +20,10 @@ export default function CreateGalleryPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-
     const storedUser = localStorage.getItem('adminUser');
     if (storedUser) {
         try { setUser(JSON.parse(storedUser)); } catch(e) {}
     }
-
     const now = new Date();
     setCurrentDate(now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }));
   }, []);
@@ -35,7 +33,6 @@ export default function CreateGalleryPage() {
     localStorage.removeItem('adminUser');
     router.push('/login');
   };
-
 
   const [formData, setFormData] = useState({
     caption: '',
@@ -48,7 +45,6 @@ export default function CreateGalleryPage() {
   const handleImageUpload = (e: any) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-
       setFile(selectedFile);
 
       const imageUrl = URL.createObjectURL(selectedFile);
@@ -56,25 +52,57 @@ export default function CreateGalleryPage() {
     }
   };
 
- 
   const handlePublish = async () => {
     if (!file) {
       alert(" Wajib upload foto!");
       return;
     }
     if (!formData.caption) {
-        alert(" Harap isi caption foto.");
+        alert("Harap isi caption foto.");
         return;
     }
 
     setIsSubmitting(true);
     try {
+        let uploadedImageUrl = "";
+
+        if (file) {
+            const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+            const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+            if (!cloudName || !uploadPreset) {
+                alert("❌ Konfigurasi Cloudinary (.env) belum lengkap!");
+                setIsSubmitting(false);
+                return;
+            }
+
+            const formDataCloud = new FormData();
+            formDataCloud.append("file", file);
+            formDataCloud.append("upload_preset", uploadPreset);
+
+            const uploadRes = await fetch(
+                `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+                { method: "POST", body: formDataCloud }
+            );
+
+            const uploadData = await uploadRes.json();
+
+            if (uploadData.secure_url) {
+                uploadedImageUrl = uploadData.secure_url;
+            } else {
+                console.error("Cloudinary Error:", uploadData);
+                throw new Error("Gagal upload gambar ke Cloudinary");
+            }
+        }
 
         const data = new FormData();
         data.append("caption", formData.caption);
         data.append("tag", formData.tag);
         data.append("author", user.name);
-        data.append("image", file);
+        
+        if (uploadedImageUrl) {
+            data.append("image", uploadedImageUrl);
+        }
 
         const result = await createGallery(data);
 
@@ -82,11 +110,11 @@ export default function CreateGalleryPage() {
             router.push('/admin'); 
             router.refresh();
         } else {
-            alert("Gagal mengupload foto.");
+            alert("Gagal menyimpan data gallery.");
         }
     } catch (error) {
         console.error(error);
-        alert("Terjadi kesalahan sistem.");
+        alert("Terjadi kesalahan sistem saat upload.");
     } finally {
         setIsSubmitting(false);
     }
