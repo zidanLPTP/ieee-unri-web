@@ -166,7 +166,7 @@ export default function HeroSection() {
         
         <h2 className="text-xl md:text-2xl text-[#7AABC3] font-light max-w-2xl mx-auto mb-4 drop-shadow-md">
           Institute of Electrical and Electronics Engineers <br />
-          <span className="text-white font-medium">Universitas Riau Student Branch</span>
+          <span className="text-white font-medium">University of Riau Student Branch</span>
         </h2>
 
         <p className="text-lg italic text-gray-400 font-serif mb-10">

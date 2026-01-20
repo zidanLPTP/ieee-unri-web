@@ -4,9 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, CalendarClock } from 'lucide-react';
-import { getPublicEvents } from '@/actions/landing-actions'; // Import Server Action
+import { getPublicEvents } from '@/actions/landing-actions'; 
 
-// Mapping warna divisi
 const divisionColors: Record<string, string> = {
   "Education": "#00E5FF",       
   "PR": "#D500F9",              
@@ -16,7 +15,6 @@ const divisionColors: Record<string, string> = {
   "Secretariat": "#2979FF",      
 };
 
-// Helper untuk mencocokkan nama divisi dari DB ke Key Warna Frontend
 const getDivisionKey = (dbName: string) => {
   if (!dbName) return "Secretariat"; // Default
   if (dbName.includes("Creative") || dbName.includes("ICM")) return "Creative";
@@ -25,7 +23,7 @@ const getDivisionKey = (dbName: string) => {
   if (dbName.includes("Membership")) return "Membership";
   if (dbName.includes("Education")) return "Education";
   if (dbName.includes("Secretariat")) return "Secretariat";
-  return "Secretariat"; // Fallback
+  return "Secretariat"; 
 };
 
 export default function UpcomingEvents() {
@@ -33,38 +31,33 @@ export default function UpcomingEvents() {
   const [viewDate, setViewDate] = useState(new Date()); 
   const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
   
-  // STATE BARU: Untuk menyimpan data dari Database
   const [eventsList, setEventsList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // FETCH DATA DARI DATABASE
   useEffect(() => {
     async function fetchData() {
       try {
         const dbEvents = await getPublicEvents();
         
-        // Transformasi Data Prisma ke Format Frontend
         const formattedEvents = dbEvents.map((e: any) => {
-            const d = new Date(e.date); // Convert ISO String ke Date Object
+            const d = new Date(e.date); 
             return {
                 id: e.id,
-                // Gunakan helper untuk mapping nama divisi ke warna
+               
                 division: getDivisionKey(e.category), 
-                realDivisionName: e.category, // Simpan nama asli untuk display text
+                realDivisionName: e.category, 
                 
-                // Pecah tanggal untuk logika kalender
                 monthIndex: d.getMonth(), 
                 year: d.getFullYear(),    
                 date: d.getDate(),        
                 
                 title: e.title,
-                category: "Event", // Label statis
+                category: "Event",
                 type: e.locationName || "Onsite",
                 
-                // Karena DB belum ada kolom speaker, kita pakai Divisi sebagai fallback
                 speaker: e.category || "IEEE Team", 
                 
-                image: e.poster || "/placeholder-event.jpg", // Fallback image
+                image: e.poster || "/placeholder-event.jpg", 
                 desc: e.description
             };
         });

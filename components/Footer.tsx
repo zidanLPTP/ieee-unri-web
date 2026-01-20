@@ -80,7 +80,7 @@ export default function Footer() {
                </h2>
             </div>
             <p className="text-sm leading-relaxed text-gray-400">
-              Official Student Branch of IEEE at Universitas Riau. 
+              Official Student Branch of IEEE at University of Riau. 
               Dedicated to advancing technology for humanity through research, innovation, and professional networking.
             </p>
             
@@ -159,7 +159,7 @@ export default function Footer() {
                 <span className="group-hover:text-white transition-colors">
                   <strong>Secretariat:</strong><br />
                   Dekanat Fakultas Teknik lt 2,<br />
-                  Universitas Riau,<br />
+                  University of Riau,<br />
                   Simpang Baru, Pekanbaru.
                 </span>
               </li>
@@ -183,7 +183,7 @@ export default function Footer() {
         <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           
           <p className="text-xs text-gray-600">
-            © {currentYear} IEEE Student Branch Universitas Riau. All rights reserved.
+            © {currentYear} IEEE Student Branch University of Riau. All rights reserved.
           </p>
 
           <div className="flex items-center gap-6">
