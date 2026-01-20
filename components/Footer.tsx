@@ -104,7 +104,7 @@ export default function Footer() {
                 },
                 {
                     icon : Phone,
-                    href: "https://wa.me/6283185116094",
+                    href: "https://wa.me/+62 831-8511-6094",
                     label: "WhatsApp"
                 }
                 // { 
