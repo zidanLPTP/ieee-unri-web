@@ -1,15 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, JSX } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ArrowRight, Newspaper, Zap, Hash, User, Loader2 } from 'lucide-react';
 import { getPublicNews, getWritersCount } from '@/actions/landing-actions'; 
+import Link from 'next/link';
 
 export default function NewsSection() {
   const [news, setNews] = useState<any[]>([]);
   const [writersCount, setWritersCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [particles, setParticles] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -31,6 +33,49 @@ export default function NewsSection() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const colors = ['#E7B95A', '#7AABC3', '#FFFFFF'];
+    const newParticles = Array.from({ length: 40 }).map((_, i) => {
+      const size = Math.random() * 3 + 1;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const top = Math.random() * 100;
+      const left = Math.random() * 100;
+      const duration = Math.random() * 10 + 10;
+      const yOffset = Math.random() * 100 - 50;
+      const xOffset = Math.random() * 60 - 30;
+      const delay = Math.random() * 5;
+
+      return (
+        <motion.div
+          key={i}
+          className="absolute rounded-full pointer-events-none"
+          style={{
+              backgroundColor: color,
+              width: size,
+              height: size,
+              top: `${top}%`,
+              left: `${left}%`,
+              boxShadow: `0 0 ${size * 2}px ${color}`,
+          }}
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: [0, 0.8, 0],
+            y: [0, yOffset, 0],
+            x: [0, xOffset, 0]
+          }}
+          transition={{
+            duration: duration,
+            repeat: Infinity,
+            repeatType: "mirror",
+            ease: "easeInOut",
+            delay: delay
+          }}
+        />
+      );
+    });
+    setParticles(newParticles);
+  }, []);
+
   const formatDate = (dateString: Date) => {
     return new Date(dateString).toLocaleDateString('id-ID', {
       day: 'numeric', month: 'short', year: 'numeric'
@@ -48,8 +93,9 @@ export default function NewsSection() {
         />
       </div>
 
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#3386B7]/5 rounded-full blur-[120px] pointer-events-none z-0" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#E7B95A]/5 rounded-full blur-[100px] pointer-events-none z-0" />
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {particles}
+      </div>
 
       <div className="container mx-auto px-6 relative z-10">
         
@@ -98,11 +144,12 @@ export default function NewsSection() {
             ) : (
         
               <>
+                  <Link href={`/news`} className="absolute inset-0 z-30" />
                   <Image 
                     src={news[0].image || "/placeholder-news.jpg"} 
                     alt={news[0].title} 
                     fill 
-                    className="object-cover transition-transform duration-700 group-hover:scale-105" 
+                    className="object-cover transition-transform duration-700 group-hover:scale-100" 
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0C101C] via-[#0C101C]/40 to-transparent" />
                   <div className="relative p-8 md:p-12">
@@ -143,6 +190,7 @@ export default function NewsSection() {
               ) : (
             
                 <div>
+                    <Link href={`/news/${news[1].slug}`} className="absolute inset-0 z-30" />
                     <div className="flex items-center gap-2 text-[#7AABC3] text-xs font-bold uppercase mb-2">
                        <Zap size={12} /> {news[1].category || "Update"}
                     </div>
@@ -173,6 +221,7 @@ export default function NewsSection() {
               ) : (
              
                   <div>
+                    <Link href={`/news/${news[2].slug}`} className="absolute inset-0 z-30" />
                     <div className="flex items-center gap-2 text-[#E7B95A] text-xs font-bold uppercase mb-2">
                        <Hash size={12} /> {news[2].category || "Community"}
                     </div>

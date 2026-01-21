@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, JSX } from 'react';
 import Image from 'next/image';
 import { motion, Variants } from 'framer-motion';
 import { Target, Zap, Globe, MapPin } from 'lucide-react';
@@ -15,10 +15,93 @@ const fadeInUp: Variants = {
 };
 
 export default function AboutModern() {
+  const [particles, setParticles] = useState<JSX.Element[]>([]);
+
+  useEffect(() => {
+    const colors = ['#E7B95A', '#7AABC3', '#FFFFFF'];
+    const newParticles = Array.from({ length: 40 }).map((_, i) => {
+      const size = Math.random() * 3 + 1;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const top = Math.random() * 100;
+      const left = Math.random() * 100;
+      const duration = Math.random() * 10 + 10;
+      const yOffset = Math.random() * 100 - 50;
+      const xOffset = Math.random() * 60 - 30;
+      const delay = Math.random() * 5;
+
+      return (
+        <motion.div
+          key={i}
+          className="absolute rounded-full pointer-events-none"
+          style={{
+              backgroundColor: color,
+              width: size,
+              height: size,
+              top: `${top}%`,
+              left: `${left}%`,
+              boxShadow: `0 0 ${size * 2}px ${color}`,
+          }}
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: [0, 0.8, 0],
+            y: [0, yOffset, 0],
+            x: [0, xOffset, 0]
+          }}
+          transition={{
+            duration: duration,
+            repeat: Infinity,
+            repeatType: "mirror",
+            ease: "easeInOut",
+            delay: delay
+          }}
+        />
+      );
+    });
+    setParticles(newParticles);
+  }, []);
+
   return (
     <section id="about" className="relative py-32 bg-[#0C101C] text-white overflow-hidden">
       
-      <div className="absolute top-0 right-[-10%] w-[600px] h-[600px] bg-[#3386B7] rounded-full blur-[180px] opacity-20 z-0 animate-pulse duration-[8000ms]" />
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {particles}
+      </div>
+      
+      <div className="absolute -top-[10%] -right-[20%] w-[300px] h-[300px] md:top-[-25%] md:right-[-15%] md:w-[600px] md:h-[600px] z-40 pointer-events-none" aria-hidden>
+        
+        <div
+          className="absolute inset-0 rounded-full mix-blend-screen pointer-events-none blur-[60px] animate-moonLight"
+          style={{
+            background:
+              'radial-gradient(circle at 35% 35%, rgba(242,200,115,0.9) 0%, rgba(242,200,115,0.35) 25%, rgba(242,200,115,0.12) 50%, transparent 70%)'
+          }}
+        />
+
+        <div
+          className="relative w-full h-full rounded-full animate-moon"
+          style={{
+            background: 'radial-gradient(circle at 30% 30%, rgba(242,200,115,0.6), rgba(242,200,115,0.3) 60%, transparent 75%)'
+          }}
+        >
+
+          <span
+            className="absolute w-[90px] h-[90px] rounded-full top-[35%] left-[30%] opacity-40 blur-sm"
+            style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.35), rgba(0,0,0,0.2))' }}
+          />
+          <span
+            className="absolute w-[60px] h-[60px] rounded-full top-[55%] left-[50%] opacity-35 blur-sm"
+            style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.3), rgba(0,0,0,0.25))' }}
+          />
+          <span
+            className="absolute w-[40px] h-[40px] rounded-full top-[42%] left-[62%] opacity-30 blur-sm"
+            style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.25), rgba(0,0,0,0.25))' }}
+          />
+          <span
+            className="absolute w-[70px] h-[70px] rounded-full top-[28%] left-[52%] opacity-35 blur-sm"
+            style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.28), rgba(0,0,0,0.2))' }}
+          />
+        </div>
+      </div>
 
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-[#3386B7]/10 z-0 overflow-hidden">
         <motion.div

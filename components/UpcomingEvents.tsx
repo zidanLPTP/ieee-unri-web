@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, JSX } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, CalendarClock } from 'lucide-react';
 import { getPublicEvents } from '@/actions/landing-actions'; 
@@ -16,7 +17,7 @@ const divisionColors: Record<string, string> = {
 };
 
 const getDivisionKey = (dbName: string) => {
-  if (!dbName) return "Secretariat"; // Default
+  if (!dbName) return "Secretariat"; 
   if (dbName.includes("Creative") || dbName.includes("ICM")) return "Creative";
   if (dbName.includes("Public") || dbName.includes("PR")) return "PR";
   if (dbName.includes("Business")) return "Business";
@@ -33,6 +34,7 @@ export default function UpcomingEvents() {
   
   const [eventsList, setEventsList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [particles, setParticles] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -73,6 +75,49 @@ export default function UpcomingEvents() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const colors = ['#E7B95A', '#7AABC3', '#FFFFFF'];
+    const newParticles = Array.from({ length: 40 }).map((_, i) => {
+      const size = Math.random() * 3 + 1;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const top = Math.random() * 100;
+      const left = Math.random() * 100;
+      const duration = Math.random() * 10 + 10;
+      const yOffset = Math.random() * 100 - 50;
+      const xOffset = Math.random() * 60 - 30;
+      const delay = Math.random() * 5;
+
+      return (
+        <motion.div
+          key={i}
+          className="absolute rounded-full pointer-events-none"
+          style={{
+              backgroundColor: color,
+              width: size,
+              height: size,
+              top: `${top}%`,
+              left: `${left}%`,
+              boxShadow: `0 0 ${size * 2}px ${color}`,
+          }}
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: [0, 0.8, 0],
+            y: [0, yOffset, 0],
+            x: [0, xOffset, 0]
+          }}
+          transition={{
+            duration: duration,
+            repeat: Infinity,
+            repeatType: "mirror",
+            ease: "easeInOut",
+            delay: delay
+          }}
+        />
+      );
+    });
+    setParticles(newParticles);
+  }, []);
+
   const year = viewDate.getFullYear();
   const monthIndex = viewDate.getMonth(); 
   const monthName = viewDate.toLocaleString('default', { month: 'long' });
@@ -96,6 +141,10 @@ export default function UpcomingEvents() {
   return (
     <section id="events" className="relative py-32 bg-[#0C101C] text-white overflow-hidden">
       
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {particles}
+      </div>
+
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-[#3386B7]/10 z-0 overflow-hidden">
         <motion.div
           className="absolute top-0 left-0 w-full h-[150px] bg-gradient-to-b from-transparent via-white to-transparent opacity-50" 
@@ -222,9 +271,11 @@ export default function UpcomingEvents() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="h-full flex flex-col"
+                  className="h-full flex flex-col relative group"
                 >
-                  <div className="relative h-64 md:h-80 w-full rounded-3xl overflow-hidden mb-6 border border-white/10 group">
+                  <Link href="/events" className="absolute inset-0 z-30" />
+                  
+                  <div className="relative h-64 md:h-80 w-full rounded-3xl overflow-hidden mb-6 border border-white/10 group-hover:border-[#3386B7]/30 transition-colors">
                       <Image 
                         src={selectedEvent.image} 
                         alt={selectedEvent.title} 
@@ -239,11 +290,11 @@ export default function UpcomingEvents() {
                          >
                             {selectedEvent.realDivisionName}
                          </span>
-                         <h3 className="text-3xl font-bold text-white">{selectedEvent.title}</h3>
+                         <h3 className="text-3xl font-bold text-white group-hover:text-[#E7B95A] transition-colors">{selectedEvent.title}</h3>
                       </div>
                   </div>
 
-                  <div className="bg-[#151b2b] p-6 rounded-2xl border border-white/5 flex-grow">
+                  <div className="bg-[#151b2b] p-6 rounded-2xl border border-white/5 flex-grow group-hover:border-[#3386B7]/30 transition-colors">
                       <p className="text-gray-300 mb-6 leading-relaxed whitespace-pre-wrap text-sm">{selectedEvent.desc}</p>
                       <div className="grid grid-cols-2 gap-4">
                          <div className="flex items-center gap-3">

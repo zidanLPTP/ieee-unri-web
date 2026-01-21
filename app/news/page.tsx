@@ -141,7 +141,7 @@ export default function NewsPage() {
 
                     <div className="w-full md:w-64 h-48 bg-gray-800 rounded-2xl overflow-hidden relative shrink-0">
                        {article.cover ? (
-                          <Image src={article.cover} alt={article.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                          <Image src={article.cover} alt={article.title} fill className="object-cover transition-transform duration-500" />
                        ) : (
                           <div className="absolute inset-0 flex items-center justify-center text-gray-600 bg-[#0C101C]">
                              <PenTool size={24} className="opacity-20"/>

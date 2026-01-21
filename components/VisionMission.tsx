@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, JSX } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Settings, Users, Handshake, BookOpen, ShieldCheck, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -41,6 +41,52 @@ export default function VisionMission() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [particles, setParticles] = useState<JSX.Element[]>([]);
+
+  // Efek Fireflies
+  useEffect(() => {
+    const colors = ['#E7B95A', '#7AABC3', '#FFFFFF'];
+    const newParticles = Array.from({ length: 40 }).map((_, i) => {
+      const size = Math.random() * 3 + 1; 
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const top = Math.random() * 100;
+      const left = Math.random() * 100;
+      const duration = Math.random() * 10 + 10; 
+      const yOffset = Math.random() * 100 - 50;
+      const xOffset = Math.random() * 60 - 30;
+      const delay = Math.random() * 5;
+
+      return (
+        <motion.div
+          key={i}
+          className="absolute rounded-full pointer-events-none"
+          style={{
+              backgroundColor: color,
+              width: size,
+              height: size,
+              top: `${top}%`,
+              left: `${left}%`,
+              boxShadow: `0 0 ${size * 2}px ${color}`,
+          }}
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: [0, 0.8, 0], 
+            y: [0, yOffset, 0],   
+            x: [0, xOffset, 0]   
+          }}
+          transition={{
+            duration: duration,
+            repeat: Infinity,
+            repeatType: "mirror",
+            ease: "easeInOut",
+            delay: delay
+          }}
+        />
+      );
+    });
+    setParticles(newParticles);
+  }, []);
+
 
   useEffect(() => {
     if (!isPaused) {
@@ -73,7 +119,10 @@ export default function VisionMission() {
   return (
     <section className="relative py-32 bg-[#0C101C] text-white overflow-hidden">
       
-      <div className="absolute top-1/4 left-[-15%] w-[600px] h-[600px] bg-[#3386B7] rounded-full blur-[180px] opacity-20 z-0 animate-pulse duration-[8000ms]" />
+      {/* Partikel Kunang-kunang */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {particles}
+      </div>
 
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-[#3386B7]/10 z-0 overflow-hidden">
         <motion.div

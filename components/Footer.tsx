@@ -103,8 +103,8 @@ export default function Footer() {
                     isEmail: true 
                 },
                 {
-                    icon : Phone,
-                    href: "https://wa.me/+62 831-8511-6094",
+                    icon: Phone,
+                    href: "https://wa.me/6283185116094",
                     label: "WhatsApp"
                 }
                 // { 
@@ -173,7 +173,7 @@ export default function Footer() {
                 <div className="w-8 h-8 rounded-full bg-[#3386B7]/10 flex items-center justify-center text-[#3386B7] group-hover:bg-[#E7B95A] group-hover:text-[#0C101C] transition-colors shrink-0">
                   <Phone size={16} />
                 </div>
-                <span className="group-hover:text-white transition-colors text-gray-600 italic">083185116094</span>
+                <span className="group-hover:text-white transition-colors text-gray-600 italic">+62 831-8511-6094</span>
               </li>
             </ul>
           </div>

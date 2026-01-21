@@ -91,7 +91,7 @@ export default function GalleryPage() {
                                     src={item.image || "/placeholder-gallery.jpg"} 
                                     alt={item.caption} 
                                     fill
-                                    className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" 
+                                    className="object-cover transition-transform duration-700 ease-in-out" 
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                  />
                                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />

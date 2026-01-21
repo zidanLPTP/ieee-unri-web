@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Instagram, Linkedin, Mail, Youtube, ArrowRight, ChevronDown, Check, Phone, PhoneCall } from 'lucide-react';
+import { Instagram, Linkedin, Mail, Phone, Check, ChevronDown } from 'lucide-react';
 
 export default function HeroSection() {
   const [scrollY, setScrollY] = useState(0);
@@ -68,12 +68,11 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0C101C]/60 via-transparent to-[#0C101C]/90" />
       </div>
 
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-[#3386B7] rounded-full blur-[150px] opacity-20 z-0 animate-pulse" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-[#214664] rounded-full blur-[150px] opacity-30 z-0" />
+      <div className="absolute -top-[10%] -left-[20%] w-[300px] h-[300px] md:top-[-30%] md:left-[-15%] md:w-[600px] md:h-[600px] bg-[#FFE6A7] rounded-full blur-[80px] md:blur-[150px] opacity-20 z-0 animate-pulse" />
+      <div className="absolute -bottom-[10%] -right-[20%] w-[300px] h-[300px] md:bottom-[-20%] md:right-[-10%] md:w-[600px] md:h-[600px] bg-[#214664] rounded-full blur-[80px] md:blur-[150px] opacity-30 z-0" />
 
       <div className="absolute left-6 md:left-12 top-1/2 -translate-y-1/2 z-20 hidden md:flex flex-col gap-8 items-center">
 
-        {/* Garis Atas */}
         <div className="w-[1px] h-12 bg-gradient-to-b from-transparent to-[#7AABC3]/50"></div>
         
         {[
@@ -98,12 +97,6 @@ export default function HeroSection() {
             href: "https://wa.me/+62 831-8511-6094",
             label: "WhatsApp"
           }
-
-          // { 
-          //   icon: Youtube, 
-          //   href: "https://youtube.com/@ieeeunri",
-          //   label: "Youtube" 
-          // },
         ].map((Item, idx) => {
               return Item.isEmail ? (
  
@@ -150,7 +143,6 @@ export default function HeroSection() {
               );
             })}
 
-        {/* Garis Bawah */}
         <div className="w-[1px] h-12 bg-gradient-to-b from-[#7AABC3]/50 to-transparent"></div>
         
       </div>

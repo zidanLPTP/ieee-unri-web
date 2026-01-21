@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, JSX } from 'react';
 import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Users, Zap, FileText, PenTool, Briefcase, BookOpen } from 'lucide-react';
@@ -54,12 +54,57 @@ const divisions = [
 export default function DepartmentSection() {
   const { scrollYProgress } = useScroll();
   const yBg = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  const [particles, setParticles] = useState<JSX.Element[]>([]);
+
+  useEffect(() => {
+    const colors = ['#E7B95A', '#7AABC3', '#FFFFFF'];
+    const newParticles = Array.from({ length: 40 }).map((_, i) => {
+      const size = Math.random() * 3 + 1;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const top = Math.random() * 100;
+      const left = Math.random() * 100;
+      const duration = Math.random() * 10 + 10;
+      const yOffset = Math.random() * 100 - 50;
+      const xOffset = Math.random() * 60 - 30;
+      const delay = Math.random() * 5;
+
+      return (
+        <motion.div
+          key={i}
+          className="absolute rounded-full pointer-events-none"
+          style={{
+              backgroundColor: color,
+              width: size,
+              height: size,
+              top: `${top}%`,
+              left: `${left}%`,
+              boxShadow: `0 0 ${size * 2}px ${color}`,
+          }}
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: [0, 0.8, 0],
+            y: [0, yOffset, 0],
+            x: [0, xOffset, 0]
+          }}
+          transition={{
+            duration: duration,
+            repeat: Infinity,
+            repeatType: "mirror",
+            ease: "easeInOut",
+            delay: delay
+          }}
+        />
+      );
+    });
+    setParticles(newParticles);
+  }, []);
 
   return (
     <section className="relative py-32 bg-[#0C101C] text-white overflow-hidden">
       
-      <div className="absolute top-[15%] right-[-10%] w-[500px] h-[500px] bg-[#3386B7] rounded-full blur-[180px] opacity-20 z-0 animate-pulse duration-[8000ms]" />
-      <div className="absolute bottom-[15%] left-[-10%] w-[500px] h-[500px] bg-[#214664] rounded-full blur-[180px] opacity-30 z-0 animate-pulse duration-[10000ms]" />
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {particles}
+      </div>
 
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-[#3386B7]/10 z-0 overflow-hidden">
          <motion.div
