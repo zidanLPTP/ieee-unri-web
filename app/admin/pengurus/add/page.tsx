@@ -25,12 +25,18 @@ const POSITIONS = [
   { label: "Staff", value: "Staff" },
   { label: "Head of Division", value: "Head of Division" },
   { label: "Web Master", value: "Web Master" },
+  
+  // Executive Board
   { label: "Director", value: "Director" },
   { label: "Vice Director I", value: "Vice Director I" },
   { label: "Vice Director II", value: "Vice Director II" },
   { label: "Vice Director III", value: "Vice Director III" },
-  { label: "Advisor", value: "Advisor" },
-  { label: "Counselor", value: "Counselor" },
+  
+  // UPDATE: Advisor dihapus, Counselor dipecah jadi 4 Slot Spesifik
+  { label: "Counselor 1", value: "Counselor 1" },
+  { label: "Counselor 2", value: "Counselor 2" },
+  { label: "Counselor 3", value: "Counselor 3" },
+  { label: "Counselor 4", value: "Counselor 4" },
 ];
 
 export default function AddOfficerPage() {
@@ -76,6 +82,7 @@ export default function AddOfficerPage() {
 
   const [showDivisionDropdown, setShowDivisionDropdown] = useState(true);
 
+  // UPDATE LOGIC ROLE OTOMATIS
   useEffect(() => {
     let role = "STAFF";
     let div = formData.division;
@@ -86,8 +93,9 @@ export default function AddOfficerPage() {
         div = "Information & Creative Media";
         showDiv = false;
     }
-    else if (["Advisor", "Counselor"].includes(formData.position)) {
-        role = "CORE";
+    // Logic Baru: Deteksi Counselor 1-4
+    else if (formData.position.startsWith("Counselor")) {
+        role = "COUNSELOR"; // Menggunakan Role Enum baru
         div = "Advisory Board";
         showDiv = false;
     }
@@ -134,7 +142,7 @@ export default function AddOfficerPage() {
             const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 
             if (!cloudName || !uploadPreset) {
-                alert(" Konfigurasi Cloudinary (.env) belum lengkap!");
+                alert("Konfigurasi Cloudinary (.env) belum lengkap!");
                 setIsSubmitting(false);
                 return;
             }
@@ -353,6 +361,7 @@ export default function AddOfficerPage() {
                             formData.accessRole === 'ADMIN' ? 'bg-red-500/10 text-red-400' :
                             formData.accessRole === 'CORE' ? 'bg-purple-500/10 text-purple-400' :
                             formData.accessRole === 'HEAD' ? 'bg-blue-500/10 text-blue-400' :
+                            formData.accessRole === 'COUNSELOR' ? 'bg-yellow-500/10 text-yellow-400' :
                             'bg-emerald-500/10 text-emerald-400'
                         }`}>
                             <div className="flex items-center gap-2 mb-1">

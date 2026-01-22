@@ -15,6 +15,7 @@ enum Role {
   CORE
   HEAD
   STAFF
+  COUNSELOR
 }
 
 model Officer {

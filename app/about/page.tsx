@@ -17,6 +17,7 @@ import {
   BookOpen,
   Share2
 } from 'lucide-react';
+import Firefly from '@/components/FireflyBackground';
 
 
 const getDivisionIcon = (name: string) => {
@@ -109,18 +110,20 @@ export default function AboutPage() {
     };
   };
 
-  const dynamicLeaders = [
-    getOfficerByRole("Advisor"),
-    getOfficerByRole("Counselor"),
-    getOfficerByRole("Director"),
+  const counselors = [
+    getOfficerByRole("Counselor 1"),
+    getOfficerByRole("Counselor 2"),
+    getOfficerByRole("Counselor 3"),
+    getOfficerByRole("Counselor 4"),
+  ];
+
+  const director = getOfficerByRole("Director");
+  
+  const viceDirectors = [
     getOfficerByRole("Vice Director I", "Internal & external affairs"),
     getOfficerByRole("Vice Director II", "Administration & Creative Media"),
     getOfficerByRole("Vice Director III", "General Affairs & Treasurer"),
   ];
-
-  const topLeaders = dynamicLeaders.slice(0, 2);    
-  const mainLeader = dynamicLeaders.slice(2, 3);    
-  const subLeaders = dynamicLeaders.slice(3, 6);   
 
   const LeaderCard = ({ item, delay = 0 }: { item: any, delay?: number }) => (
     <motion.div 
@@ -171,11 +174,7 @@ export default function AboutPage() {
     <main className="min-h-screen bg-[#0C101C] text-white overflow-hidden selection:bg-[#E7B95A] selection:text-[#0C101C] relative">
       <Navbar />
 
-      <div className="absolute top-[10%] right-[-10%] w-[500px] h-[500px] bg-[#3386B7] rounded-full blur-[180px] opacity-20 z-0 animate-pulse duration-[8000ms]" />
-      
-      <div className="absolute top-[40%] right-[-5%] w-[400px] h-[400px] bg-[#7AABC3] rounded-full blur-[150px] opacity-10 z-0 animate-pulse duration-[9000ms]" />
-
-      <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] bg-[#214664] rounded-full blur-[180px] opacity-30 z-0 animate-pulse duration-[10000ms]" />
+      <Firefly />
 
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-[#3386B7]/10 z-0">
          <motion.div
@@ -299,26 +298,27 @@ export default function AboutPage() {
               <h2 className="text-4xl md:text-5xl font-bold">The Executives</h2>
             </motion.div>
 
-            <div className="flex flex-col gap-8 md:gap-12 items-center">
+            <div className="flex flex-col gap-12 items-center">
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
-                 {topLeaders.map((leader, i) => (
+              {/* 4 COUNSELORS GRID */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-7xl">
+                 {counselors.map((leader, i) => (
                     <LeaderCard key={i} item={leader} delay={i * 0.1} />
                  ))}
               </div>
     
               <div className="hidden md:block w-px h-12 bg-gradient-to-b from-[#3386B7]/50 to-[#E7B95A]/50 -my-6 relative z-0"></div>
               
+              {/* DIRECTOR */}
               <div className="w-full max-w-[400px]">
-                 {mainLeader.map((leader, i) => (
-                    <LeaderCard key={i} item={leader} delay={0.3} />
-                 ))}
+                 <LeaderCard item={director} delay={0.3} />
               </div>
 
               <div className="hidden md:block w-px h-12 bg-gradient-to-b from-[#E7B95A]/50 to-[#3386B7]/50 -my-6 relative z-0"></div>
 
+              {/* VICE DIRECTORS */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
-                 {subLeaders.map((leader, i) => (
+                 {viceDirectors.map((leader, i) => (
                     <LeaderCard key={i} item={leader} delay={0.4 + (i * 0.1)} />
                  ))}
               </div>

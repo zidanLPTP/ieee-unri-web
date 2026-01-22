@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
 import { getPublicNewsPaginated } from '@/actions/landing-actions'; 
+import Firefly from '@/components/FireflyBackground';
 
 export default function NewsPage() {
 
@@ -19,7 +20,6 @@ export default function NewsPage() {
 
   const itemsPerPage = 8;
 
-  // FETCH DATA
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
@@ -74,6 +74,8 @@ export default function NewsPage() {
   return (
     <main className="min-h-screen bg-[#0C101C] text-white">
       <Navbar />
+
+      <Firefly />
       
       <section className="pt-40 pb-16 px-6 container mx-auto relative">
 

@@ -13,6 +13,7 @@ import {
   Loader2, CornerDownRight, Barcode, ShieldCheck
 } from 'lucide-react';
 import { getAllOfficers } from '@/actions/landing-actions'; 
+import Firefly from '@/components/FireflyBackground';
 
 export default function DepartmentsPage() {
   return (
@@ -66,9 +67,7 @@ function DepartmentsContent() {
     <main className="min-h-screen bg-[#0C101C] text-white selection:bg-[#E7B95A] selection:text-[#0C101C] relative overflow-hidden font-sans">
       <Navbar />
 
-      <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.03] z-0 pointer-events-none" />
-      <div className="absolute top-[20%] right-[-15%] w-[600px] h-[600px] bg-[#3386B7] rounded-full blur-[200px] opacity-10 z-0 animate-pulse duration-[8000ms]" />
-      <div className="absolute bottom-[-10%] left-[-15%] w-[600px] h-[600px] bg-[#214664] rounded-full blur-[200px] opacity-20 z-0 animate-pulse duration-[10000ms]" />
+      <Firefly />
 
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-[#3386B7]/5 z-0 hidden md:block">
          <motion.div

@@ -7,6 +7,7 @@ import { ImageIcon, X, ZoomIn, User, ChevronLeft, ChevronRight, Loader2 } from '
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { getPublicGallery } from '@/actions/landing-actions'; 
+import Firefly from '@/components/FireflyBackground';
 
 const getBentoClass = (index: number, page: number) => {
   const patternIndex = page % 3;
@@ -51,10 +52,9 @@ export default function GalleryPage() {
     <div className="flex flex-col min-h-screen bg-[#0C101C] text-white selection:bg-[#E7B95A] selection:text-[#0C101C]">
       <Navbar />
 
+      <Firefly />
+
       <main className="flex-1 w-full relative overflow-hidden">
-        
-         <div className="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-[#3386B7] rounded-full blur-[100px] md:blur-[200px] opacity-20 z-0 animate-pulse duration-[8000ms]" />
-         <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.03] z-0 pointer-events-none" />
 
          <section className="pt-24 md:pt-32 pb-8 md:pb-12 px-6 text-center relative z-10">
             <h1 className="text-3xl md:text-6xl font-extrabold mb-3 md:mb-4">

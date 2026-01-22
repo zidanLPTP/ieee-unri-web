@@ -144,7 +144,7 @@ export default function NewsSection() {
             ) : (
         
               <>
-                  <Link href={`/news`} className="absolute inset-0 z-30" />
+                  <Link href={`/news/${news[0].id}`} className="absolute inset-0 z-30" />
                   <Image 
                     src={news[0].image || "/placeholder-news.jpg"} 
                     alt={news[0].title} 
@@ -190,7 +190,7 @@ export default function NewsSection() {
               ) : (
             
                 <div>
-                    <Link href={`/news/${news[1].slug}`} className="absolute inset-0 z-30" />
+                    <Link href={`/news/${news[1].id}`} className="absolute inset-0 z-30" />
                     <div className="flex items-center gap-2 text-[#7AABC3] text-xs font-bold uppercase mb-2">
                        <Zap size={12} /> {news[1].category || "Update"}
                     </div>
@@ -221,7 +221,7 @@ export default function NewsSection() {
               ) : (
              
                   <div>
-                    <Link href={`/news/${news[2].slug}`} className="absolute inset-0 z-30" />
+                    <Link href={`/news/${news[2].id}`} className="absolute inset-0 z-30" />
                     <div className="flex items-center gap-2 text-[#E7B95A] text-xs font-bold uppercase mb-2">
                        <Hash size={12} /> {news[2].category || "Community"}
                     </div>

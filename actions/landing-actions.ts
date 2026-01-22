@@ -64,6 +64,29 @@ export async function getPublicGallery(page: number = 1, limit: number = 8) {
   }
 }
 
+export async function getNewsById(id: number) {
+  try {
+    const newsItem = await prisma.news.findUnique({
+      where: { id: Number(id) }, 
+    });
+
+    if (!newsItem) return null;
+
+    return {
+      id: newsItem.id,
+      title: newsItem.title,
+      content: newsItem.content,
+      image: newsItem.image,
+      date: newsItem.date, 
+      category: newsItem.category,
+      author: newsItem.author || "IEEE Team", 
+    };
+  } catch (error) {
+    console.error("Error fetching news detail:", error);
+    return null;
+  }
+}
+
 export async function getPublicNewsPaginated(page: number = 1, limit: number = 8) {
   try {
     const skip = (page - 1) * limit;

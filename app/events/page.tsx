@@ -6,7 +6,8 @@ import Image from 'next/image';
 import { Calendar, Users, History, Hourglass, ChevronLeft, ChevronRight, Video, MapPin, Search, Clock, ArrowRight, Loader2 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { getAllEvents } from '@/actions/landing-actions'; // Import Action
+import { getAllEvents } from '@/actions/landing-actions'; 
+import Firefly from '@/components/FireflyBackground';
 
 const divisionColors: Record<string, string> = {
   "education": "#00E5FF",       
@@ -18,7 +19,6 @@ const divisionColors: Record<string, string> = {
   "general": "#E7B95A"     
 };
 
-// Helper untuk mapping nama Database -> Key Warna Frontend
 const getDivisionKey = (dbCategory: string) => {
     const lower = dbCategory.toLowerCase();
     if (lower.includes("education")) return "education";
@@ -31,30 +31,26 @@ const getDivisionKey = (dbCategory: string) => {
 };
 
 export default function EventsPage() {
-  const [viewDate, setViewDate] = useState(new Date()); // Default ke bulan sekarang
+  const [viewDate, setViewDate] = useState(new Date()); 
   const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
   const [rawEvents, setRawEvents] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // FETCH DATA DARI DATABASE
   useEffect(() => {
     async function fetchData() {
         try {
             const data = await getAllEvents();
             
-            // Format Data
             const formattedEvents = data.map((e: any) => ({
                 id: e.id,
                 title: e.title,
-                date: e.date, // ISO String dari Prisma
+                date: e.date, 
                 timeStart: e.timeStart,
-                // Logic mode online/onsite
                 mode: (e.locationName.toLowerCase().includes('zoom') || e.locationName.toLowerCase().includes('meet')) ? 'online' : 'onsite',
                 locationName: e.locationName,
                 desc: e.description,
-                // Mapping Divisi
                 divisionId: getDivisionKey(e.category),
-                realCategory: e.category, // Simpan nama asli
+                realCategory: e.category, 
                 poster: e.poster || null,
                 regLink: e.regLink,
                 regText: "Register Now" 
@@ -73,18 +69,15 @@ export default function EventsPage() {
 
   const now = new Date();
   
-  // Set jam ke 00:00:00 agar perbandingan tanggal akurat (hari ini masih dianggap upcoming)
   now.setHours(0,0,0,0);
 
-  // Filter Upcoming (Hari ini dan masa depan)
   const upcomingEvents = rawEvents
     .filter(ev => new Date(ev.date) >= now)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-  // Filter Past (Kemarin dan sebelumnya)
   const pastEvents = rawEvents
     .filter(ev => new Date(ev.date) < now)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // Sort Descending (Terbaru di atas)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const hasPastEvents = pastEvents.length > 0;
 
@@ -102,8 +95,6 @@ export default function EventsPage() {
   const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   const getEventOnDate = (d: number) => {
-    // Cari event di tanggal tersebut (Upcoming maupun Past bisa ditampilkan di kalender)
-    // Tapi biasanya kalender fokus ke Upcoming atau All. Di sini kita tampilkan All Events di kalender agar user bisa lihat history juga.
     return rawEvents.find(e => {
       const eDate = new Date(e.date);
       return eDate.getDate() === d && 
@@ -115,6 +106,8 @@ export default function EventsPage() {
   return (
     <main className="min-h-screen bg-[#0C101C] text-white">
       <Navbar />
+
+      <Firefly />
 
       <section className="relative px-6 pt-32 mb-20">
         
