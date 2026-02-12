@@ -1,4 +1,4 @@
-// app/page.";
+
 import HeroSection from "@/components/HeroSection";
 import Navbar from "@/components/Navbar";
 import About from "@/components/About";
@@ -7,7 +7,8 @@ import DepartmentSection from "@/components/DepartmentSection";
 import UpcomingEvents from "@/components/UpcomingEvents";
 import Footer from "@/components/Footer";
 import NewsSection from "@/components/NewsSection";
-import ScrollToTop from "@/components/ScrollToTop";
+import ScrollToTop from "@/components/Sponsors";
+import Sponsors from "@/components/Sponsors";
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
       <About />
       <VisionMission />
       <DepartmentSection />
+      <Sponsors  />
       <NewsSection />
       <UpcomingEvents />
       <Footer />
