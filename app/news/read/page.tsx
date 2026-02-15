@@ -1,16 +1,24 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react'; 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation'; 
 import { motion, useScroll, useSpring } from 'framer-motion';
-import { ArrowLeft, Calendar, Share2, Quote, Linkedin, Twitter, Link as LinkIcon } from 'lucide-react';
+import { ArrowLeft, Quote } from 'lucide-react';
 import { getNewsById } from '@/actions/landing-actions';
 
-export default function NewsDetailPage() {
-  const params = useParams();
-  const id = params?.id; 
+export default function NewsDetailPageWrapper() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0C101C]" />}>
+      <NewsContent />
+    </Suspense>
+  );
+}
+
+function NewsContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id'); 
   
   const [news, setNews] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -143,28 +151,15 @@ export default function NewsDetailPage() {
 
                     <div 
                         className="prose prose-lg prose-invert max-w-none
-                        
-                        /* Lead Paragraph: Serif, sedikit lebih besar, warna nyaman */
+                        /* Styling yang sama seperti sebelumnya tetap ada disini */
                         [&>p:first-of-type]:text-xl [&>p:first-of-type]:leading-loose [&>p:first-of-type]:text-gray-300 [&>p:first-of-type]:font-serif [&>p:first-of-type]:mb-8
-                        
-                        /* Drop Cap: Elegan, tidak terlalu agresif */
                         [&>p:first-of-type]:first-letter:text-4xl [&>p:first-of-type]:first-letter:font-bold [&>p:first-of-type]:first-letter:text-[#E7B95A] [&>p:first-of-type]:first-letter:mr-2 [&>p:first-of-type]:first-letter:float-left
-                        
-                        /* Blockquotes: Simple border, no background box */
                         [&>blockquote]:border-l-2 [&>blockquote]:border-[#E7B95A] [&>blockquote]:pl-6 [&>blockquote]:py-1 [&>blockquote]:my-10 [&>blockquote]:italic [&>blockquote]:text-xl [&>blockquote]:text-gray-200 [&>blockquote]:font-serif
-                        
-                        /* Headings: Clear hierarchy */
                         [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-white [&>h2]:mt-12 [&>h2]:mb-4
                         [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-gray-200 [&>h3]:mt-8 [&>h3]:mb-3
-
-                        /* Links */
                         [&>p>a]:text-[#3386B7] [&>p>a]:underline [&>p>a]:decoration-1 [&>p>a]:underline-offset-4 hover:[&>p>a]:text-[#E7B95A] hover:[&>p>a]:no-underline
-                        
-                        /* Lists */
                         [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:text-gray-400
                         [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:text-gray-400
-
-                        /* Base Text */
                         text-gray-400 leading-8 font-light
                         "
                         dangerouslySetInnerHTML={{ __html: news.content }}
