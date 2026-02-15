@@ -68,12 +68,11 @@ export default function Sponsors() {
   return (
     <section id="sponsors" className="relative py-24 bg-[#0C101C] text-white overflow-hidden">
       
-      {/* 1. Background Particles */}
+      {/* Background Particle */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         {particles}
       </div>
 
-      {/* 2. Vertical Moving Line (Beam) - DITAMBAHKAN DISINI */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-[#3386B7]/10 z-0 overflow-hidden">
         <motion.div
           className="absolute top-0 left-0 w-full h-[150px] bg-gradient-to-b from-transparent via-white to-transparent opacity-50"
@@ -106,9 +105,6 @@ export default function Sponsors() {
             <div key={sponsor.id} className="relative h-48 md:h-64">
               <Link href={sponsor.url} target="_blank" className="block h-full w-full">
                 
-                {/* Animated Rotating Border (Pengganti Hover) */}
-                {/* Pastikan class 'animate-spin-slow' sudah ada di tailwind.config.ts kamu. 
-                    Jika belum, ganti className ini dengan <motion.div animate={{ rotate: 360 }} ... /> */}
                 <div 
                   className="absolute -inset-[1px] rounded-3xl opacity-60 animate-spin-slow overflow-hidden"
                   style={{ 
@@ -116,16 +112,14 @@ export default function Sponsors() {
                   }} 
                 />
 
-                {/* Card Body */}
                 <div className="relative h-full w-full bg-[#0C101C] rounded-[22px] p-8 flex items-center justify-center overflow-hidden border border-white/5">
                   
-                  {/* Constant Ambient Glow */}
+    
                   <div 
                     className="absolute inset-0 opacity-20"
                     style={{ background: `radial-gradient(circle at center, ${sponsor.color}, transparent 80%)` }}
                   />
 
-                  {/* Logo Image */}
                   <div className="relative w-full h-full p-4">
                     <Image
                       src={sponsor.logo}
